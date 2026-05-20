@@ -27,3 +27,19 @@ def get_db():
 def init_db():
     from database.models import Prediction  # noqa: F401
     Base.metadata.create_all(bind=engine)
+    upgrade_db()
+
+
+def upgrade_db():
+    """Add columns introduced after initial schema creation."""
+    from sqlalchemy import text, inspect
+    insp = inspect(engine)
+    try:
+        existing = {c["name"] for c in insp.get_columns("predictions")}
+        with engine.begin() as conn:
+            if "analyst_label" not in existing:
+                conn.execute(text("ALTER TABLE predictions ADD COLUMN analyst_label INTEGER"))
+            if "feedback_at" not in existing:
+                conn.execute(text("ALTER TABLE predictions ADD COLUMN feedback_at TIMESTAMP"))
+    except Exception:
+        pass

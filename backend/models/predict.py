@@ -13,16 +13,14 @@ from utils.text_explainer import generate_explanation
 
 logger = logging.getLogger(__name__)
 
-VERDICT_THRESHOLDS = {
-    "approve": 0.40,
-    "review": 0.70,
-}
+DEFAULT_FRAUD_THRESHOLD = 0.40
+REVIEW_UPPER = 0.70
 
 
-def probability_to_verdict(prob: float) -> str:
-    if prob < VERDICT_THRESHOLDS["approve"]:
+def probability_to_verdict(prob: float, threshold: float = DEFAULT_FRAUD_THRESHOLD) -> str:
+    if prob < threshold:
         return "APPROVED"
-    if prob < VERDICT_THRESHOLDS["review"]:
+    if prob < REVIEW_UPPER:
         return "REVIEW REQUIRED"
     return "FRAUD BLOCKED"
 
@@ -81,6 +79,7 @@ def predict_single(
     models: dict,
     pipeline: PreprocessingPipeline,
     selected_models: Optional[List[str]] = None,
+    thresholds: Optional[Dict[str, float]] = None,
 ) -> dict:
     selected_models = selected_models or list(models.keys())
     df = _build_input_df(transaction, pipeline)
@@ -95,14 +94,15 @@ def predict_single(
             continue
         model = models[name]
         prob = float(model.predict_proba(X)[0, 1])
-        verdict = probability_to_verdict(prob)
+        threshold = (thresholds or {}).get(name, DEFAULT_FRAUD_THRESHOLD)
+        verdict = probability_to_verdict(prob, threshold)
         verdicts.append(verdict)
 
         shap_vals = get_shap_values(name, model, X)
         shap_row = shap_vals[0]
         features = top_features(shap_row, raw_display_row, top_n=8)
         context = {"category": transaction.get("category", "")}
-        explanation = generate_explanation(features, is_fraud=(prob >= 0.40), context=context)
+        explanation = generate_explanation(features, is_fraud=(prob >= threshold), context=context)
 
         model_results.append({
             "model_name": name,
@@ -142,11 +142,11 @@ def predict_batch(
     models: dict,
     pipeline: PreprocessingPipeline,
     selected_models: Optional[List[str]] = None,
+    thresholds: Optional[Dict[str, float]] = None,
 ) -> pd.DataFrame:
     selected_models = selected_models or list(models.keys())
     result_df = df.copy()
 
-    # Resolve home coords for each row
     def _resolve(row):
         cc = row.get("cc_num")
         hl, hlo = resolve_home_coords(cc, None, pipeline)
@@ -169,9 +169,13 @@ def predict_batch(
         probs_by_model[name] = probs
 
     if probs_by_model:
+        # Per-model threshold for combined verdict
+        all_thresholds = [
+            (thresholds or {}).get(n, DEFAULT_FRAUD_THRESHOLD) for n in selected_models if n in models
+        ]
+        avg_threshold = float(np.mean(all_thresholds)) if all_thresholds else DEFAULT_FRAUD_THRESHOLD
         avg_probs = np.mean(list(probs_by_model.values()), axis=0)
-        result_df["combined_verdict"] = [probability_to_verdict(p) for p in avg_probs]
-        # Main fraud reason: top shap feature for first selected model
+        result_df["combined_verdict"] = [probability_to_verdict(p, avg_threshold) for p in avg_probs]
         first_model_name = selected_models[0]
         if first_model_name in models:
             shap_vals = get_shap_values(first_model_name, models[first_model_name], X)

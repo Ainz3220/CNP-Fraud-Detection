@@ -15,6 +15,8 @@ class Prediction(Base):
     verdict = Column(String(30))
     explanation = Column(Text)  # JSON string
     created_at = Column(DateTime, default=datetime.utcnow)
+    analyst_label = Column(Integer, nullable=True)   # 0=legit, 1=fraud, None=no feedback
+    feedback_at = Column(DateTime, nullable=True)
 
     def set_transaction_data(self, data: dict):
         self.transaction_data = json.dumps(data)

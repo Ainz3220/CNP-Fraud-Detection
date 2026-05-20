@@ -1,10 +1,42 @@
 import React, { useEffect, useState } from 'react'
 import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer,
+  Tooltip, Legend, ResponsiveContainer, ComposedChart,
 } from 'recharts'
 import { getMetrics, getHistoryStats, getHistory } from '../services/api'
 import MetricsTable from '../components/MetricsTable'
+
+const MODEL_COLORS = { lr: '#6366f1', rf: '#10b981', xgb: '#f59e0b' }
+const MODEL_NAMES = { lr: 'Logistic Reg.', rf: 'Random Forest', xgb: 'XGBoost' }
+
+function ConfusionMatrix({ cm, label }) {
+  if (!cm) return null
+  const { tn = 0, fp = 0, fn = 0, tp = 0 } = cm
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{label}</p>
+      <div className="grid grid-cols-2 gap-px bg-gray-200 dark:bg-gray-700 text-xs text-center w-40 rounded overflow-hidden">
+        <div className="bg-green-50 dark:bg-green-900/30 p-2">
+          <div className="font-bold text-green-700 dark:text-green-400">{tp}</div>
+          <div className="text-gray-500">TP</div>
+        </div>
+        <div className="bg-red-50 dark:bg-red-900/20 p-2">
+          <div className="font-bold text-red-600 dark:text-red-400">{fp}</div>
+          <div className="text-gray-500">FP</div>
+        </div>
+        <div className="bg-red-50 dark:bg-red-900/20 p-2">
+          <div className="font-bold text-red-600 dark:text-red-400">{fn}</div>
+          <div className="text-gray-500">FN</div>
+        </div>
+        <div className="bg-green-50 dark:bg-green-900/30 p-2">
+          <div className="font-bold text-green-700 dark:text-green-400">{tn}</div>
+          <div className="text-gray-500">TN</div>
+        </div>
+      </div>
+      <p className="text-xs text-gray-400 mt-1">Predicted →</p>
+    </div>
+  )
+}
 
 const StatCard = ({ label, value, sub, color }) => (
   <div className="card">
@@ -135,6 +167,114 @@ export default function Dashboard({ modelsLoaded }) {
         <h2 className="text-base font-semibold mb-4">Model Metrics</h2>
         <MetricsTable metrics={metrics} />
       </div>
+
+      {/* PR Curves + Confusion Matrices */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="card">
+          <h2 className="text-base font-semibold mb-1">Precision-Recall Curves</h2>
+          <p className="text-xs text-gray-400 mb-4">Higher area = better fraud detection on imbalanced data</p>
+          {['lr', 'rf', 'xgb'].some(k => metrics[k]?.pr_curve?.length > 0) ? (
+            <ResponsiveContainer width="100%" height={240}>
+              <ComposedChart margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                <XAxis type="number" dataKey="recall" domain={[0, 1]} tick={{ fontSize: 10 }} label={{ value: 'Recall', position: 'insideBottom', offset: -2, fontSize: 11 }} />
+                <YAxis domain={[0, 1]} tick={{ fontSize: 10 }} label={{ value: 'Precision', angle: -90, position: 'insideLeft', fontSize: 11 }} />
+                <Tooltip formatter={(v) => v?.toFixed ? v.toFixed(3) : v} labelFormatter={v => `Recall: ${Number(v).toFixed(3)}`} />
+                <Legend />
+                {['lr', 'rf', 'xgb'].map(key =>
+                  metrics[key]?.pr_curve ? (
+                    <Line
+                      key={key}
+                      data={metrics[key].pr_curve}
+                      type="monotone"
+                      dataKey="precision"
+                      stroke={MODEL_COLORS[key]}
+                      strokeWidth={2}
+                      dot={false}
+                      name={`${MODEL_NAMES[key]} (PR-AUC: ${metrics[key].pr_auc ?? '—'})`}
+                    />
+                  ) : null
+                )}
+              </ComposedChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+              Train models to see PR curves.
+            </div>
+          )}
+        </div>
+
+        <div className="card">
+          <h2 className="text-base font-semibold mb-1">Confusion Matrices</h2>
+          <p className="text-xs text-gray-400 mb-4">At F1-optimal threshold per model</p>
+          {['lr', 'rf', 'xgb'].some(k => metrics[k]?.confusion_matrix) ? (
+            <div className="flex justify-around items-center flex-wrap gap-4 py-2">
+              {['lr', 'rf', 'xgb'].map(key =>
+                metrics[key]?.confusion_matrix ? (
+                  <ConfusionMatrix
+                    key={key}
+                    cm={metrics[key].confusion_matrix}
+                    label={`${MODEL_NAMES[key]} (t=${metrics[key].optimal_threshold ?? '—'})`}
+                  />
+                ) : null
+              )}
+            </div>
+          ) : (
+            <div className="h-48 flex items-center justify-center text-gray-400 text-sm">
+              Train models to see confusion matrices.
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Model Card */}
+      {metrics._meta && (
+        <div className="card">
+          <h2 className="text-base font-semibold mb-4">Model Card</h2>
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Last Trained</p>
+              <p className="font-medium">{metrics._meta.trained_at ? new Date(metrics._meta.trained_at).toLocaleString() : '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Training Samples</p>
+              <p className="font-medium">{metrics._meta.n_samples?.toLocaleString() ?? '—'}</p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">Fraud / Legit Split</p>
+              <p className="font-medium">
+                <span className="text-red-600">{metrics._meta.n_fraud?.toLocaleString() ?? '—'} fraud</span>
+                {' / '}
+                <span className="text-green-600">{metrics._meta.n_legit?.toLocaleString() ?? '—'} legit</span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-gray-500 mb-1">SMOTE Synthetic Samples</p>
+              <p className="font-medium">{metrics._meta.smote_samples_added?.toLocaleString() ?? '—'} added</p>
+            </div>
+            <div className="sm:col-span-2">
+              <p className="text-xs text-gray-500 mb-1">Features ({metrics._meta.features?.length ?? 0})</p>
+              <div className="flex flex-wrap gap-1">
+                {(metrics._meta.features ?? []).map(f => (
+                  <span key={f} className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded">
+                    {f}
+                  </span>
+                ))}
+              </div>
+            </div>
+            <div className="sm:col-span-full">
+              <p className="text-xs text-gray-500 mb-1">Optimal Thresholds (F1-maximizing)</p>
+              <div className="flex flex-wrap gap-3">
+                {['lr', 'rf', 'xgb'].map(key => metrics[key]?.optimal_threshold != null && (
+                  <span key={key} className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                    {MODEL_NAMES[key]}: {metrics[key].optimal_threshold}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Recent predictions */}
       <div className="card">

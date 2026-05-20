@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import ModelSelector from '../components/ModelSelector'
-import { predictBatch } from '../services/api'
+import { predictBatchStream } from '../services/api'
 import toast from 'react-hot-toast'
 
 const VERDICT_STYLES = {
@@ -29,27 +29,32 @@ export default function BatchPredict({ modelsLoaded }) {
     multiple: false,
   })
 
+  const [progressText, setProgressText] = useState('')
+
   const handleSubmit = async () => {
     if (!file) return
     if (!modelsLoaded) { toast.error('Models are still loading.'); return }
 
     setLoading(true)
-    setProgress(10)
+    setProgress(0)
+    setProgressText('')
     setRows([])
     setCsvBlob(null)
     setStats(null)
 
     try {
-      const interval = setInterval(() => {
-        setProgress(p => Math.min(p + 5, 85))
-      }, 800)
-
-      const blob = await predictBatch(file, selectedModels.join(','))
-      clearInterval(interval)
+      const blob = await predictBatchStream(
+        file,
+        selectedModels.join(','),
+        (processed, total) => {
+          setProgress(Math.round((processed / total) * 100))
+          setProgressText(`${processed} / ${total} rows`)
+        }
+      )
       setProgress(100)
+      setProgressText('Done')
       setCsvBlob(blob)
 
-      // Parse returned CSV for display
       const text = await blob.text()
       const lines = text.trim().split('\n')
       const headers = lines[0].split(',')
@@ -59,7 +64,6 @@ export default function BatchPredict({ modelsLoaded }) {
       })
       setRows(parsed)
 
-      // Summary stats
       const verdictCol = 'combined_verdict'
       const allLines = lines.slice(1)
       const headerIdx = headers.indexOf(verdictCol)
@@ -72,7 +76,7 @@ export default function BatchPredict({ modelsLoaded }) {
       setStats({ total: allLines.length, fraud, review, safe: allLines.length - fraud - review })
       toast.success('Batch prediction complete')
     } catch {
-      // error shown by interceptor
+      // error shown by api.js
     } finally {
       setLoading(false)
     }
@@ -125,7 +129,7 @@ export default function BatchPredict({ modelsLoaded }) {
         {loading && (
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span>Processing...</span>
+              <span>{progressText ? `Processing… ${progressText}` : 'Starting…'}</span>
               <span>{progress}%</span>
             </div>
             <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">

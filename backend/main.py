@@ -1,5 +1,6 @@
 """CNP Fraud Detection — FastAPI application entry point."""
 
+import asyncio
 import io
 import json
 import logging
@@ -9,6 +10,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import List, Optional
 
+import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
@@ -103,6 +105,16 @@ async def startup_event():
     thread.start()
 
 
+def _extract_thresholds(metrics: dict) -> dict:
+    """Pull optimal_threshold per model from metrics.json into a plain dict."""
+    result = {}
+    for name in ("lr", "rf", "xgb"):
+        t = metrics.get(name, {}).get("optimal_threshold")
+        if t is not None:
+            result[name] = float(t)
+    return result
+
+
 def require_models():
     if not _models_loaded:
         raise HTTPException(status_code=503, detail="Models are still loading. Check /api/status.")
@@ -168,7 +180,8 @@ def predict(
         raise HTTPException(status_code=400, detail="No valid models specified.")
 
     tx_dict = transaction.model_dump(exclude_none=False)
-    result = predict_single(tx_dict, ml_models, pipeline, selected)
+    thresholds = _extract_thresholds(_metrics)
+    result = predict_single(tx_dict, ml_models, pipeline, selected, thresholds=thresholds)
 
     # Persist each model result to the database
     for model_result in result["model_results"]:
@@ -198,7 +211,8 @@ async def predict_batch_endpoint(
     df = pd.read_csv(io.BytesIO(contents))
     df = validate_predict_csv(df)
 
-    result_df = predict_batch(df, ml_models, pipeline, selected)
+    thresholds = _extract_thresholds(_metrics)
+    result_df = predict_batch(df, ml_models, pipeline, selected, thresholds=thresholds)
 
     output = io.StringIO()
     result_df.to_csv(output, index=False)
@@ -211,11 +225,41 @@ async def predict_batch_endpoint(
     )
 
 
+@app.post("/api/feedback/{prediction_id}")
+def submit_feedback(
+    prediction_id: int,
+    label: int = Query(..., ge=0, le=1),
+    db: Session = Depends(get_db),
+):
+    rec = db.query(Prediction).filter(Prediction.id == prediction_id).first()
+    if not rec:
+        raise HTTPException(status_code=404, detail="Prediction not found.")
+    rec.analyst_label = label
+    rec.feedback_at = datetime.utcnow()
+    db.commit()
+    return {"id": prediction_id, "analyst_label": label}
+
+
 @app.post("/api/retrain")
-async def retrain_endpoint(file: UploadFile = File(...)):
+async def retrain_endpoint(file: UploadFile = File(...), db: Session = Depends(get_db)):
     contents = await file.read()
     new_df = pd.read_csv(io.BytesIO(contents))
     new_df = validate_retrain_csv(new_df)
+
+    # Merge analyst feedback from DB as additional labeled rows
+    feedback_rows = (
+        db.query(Prediction)
+        .filter(Prediction.analyst_label.isnot(None))
+        .all()
+    )
+    if feedback_rows:
+        fb_records = []
+        for rec in feedback_rows:
+            tx = rec.get_transaction_data()
+            tx["is_fraud"] = rec.analyst_label
+            fb_records.append(tx)
+        fb_df = pd.DataFrame(fb_records)
+        new_df = pd.concat([new_df, fb_df], ignore_index=True)
 
     train_csv = os.path.join(DATA_DIR, "fraudTrain.csv")
     if not os.path.exists(train_csv):
@@ -235,6 +279,50 @@ async def retrain_endpoint(file: UploadFile = File(...)):
 
     comparison = _retrain()
     return comparison
+
+
+@app.post("/api/predict/batch/stream")
+async def predict_batch_stream(
+    file: UploadFile = File(...),
+    models: str = Query(default="lr,rf,xgb"),
+):
+    ml_models, pipeline = require_models()
+    selected = [m.strip() for m in models.split(",") if m.strip() in ml_models]
+    if not selected:
+        raise HTTPException(status_code=400, detail="No valid models specified.")
+
+    contents = await file.read()
+    df = pd.read_csv(io.BytesIO(contents))
+    df = validate_predict_csv(df)
+    thresholds = _extract_thresholds(_metrics)
+
+    total = len(df)
+
+    async def event_stream():
+        chunk_size = 20
+        result_chunks: List[pd.DataFrame] = []
+
+        for start in range(0, total, chunk_size):
+            chunk = df.iloc[start: start + chunk_size].copy()
+            chunk_result = await asyncio.to_thread(
+                predict_batch, chunk, ml_models, pipeline, selected, thresholds
+            )
+            result_chunks.append(chunk_result)
+            processed = min(start + chunk_size, total)
+            progress_event = json.dumps({"type": "progress", "processed": processed, "total": total})
+            yield f"data: {progress_event}\n\n"
+
+        full_result = pd.concat(result_chunks, ignore_index=True)
+        out = io.StringIO()
+        full_result.to_csv(out, index=False)
+        done_event = json.dumps({"type": "done", "csv": out.getvalue()})
+        yield f"data: {done_event}\n\n"
+
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+    )
 
 
 @app.get("/api/history")
@@ -285,6 +373,8 @@ def get_history(
             "main_reason": main_reason,
             "explanation": exp,
             "transaction_data": tx,
+            "analyst_label": rec.analyst_label,
+            "feedback_at": rec.feedback_at.isoformat() if rec.feedback_at else None,
         })
 
     return {

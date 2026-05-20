@@ -3,6 +3,7 @@
 import json
 import logging
 import os
+from datetime import datetime as dt
 from pathlib import Path
 from typing import Dict, Tuple
 
@@ -12,10 +13,14 @@ import pandas as pd
 from imblearn.over_sampling import SMOTE
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import (
+    accuracy_score, precision_score, recall_score, f1_score, roc_auc_score,
+    average_precision_score, precision_recall_curve,
+    confusion_matrix as sk_confusion_matrix,
+)
 from xgboost import XGBClassifier
 
-from data.preprocess import PreprocessingPipeline, load_raw_data, FEATURE_COLS
+from data.preprocess import PreprocessingPipeline, load_raw_data, FEATURE_COLS  # noqa: F401 (used in _meta)
 
 logger = logging.getLogger(__name__)
 
@@ -36,14 +41,36 @@ def _update_status(status: str, progress: int, message: str):
 
 
 def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> dict:
-    y_pred = model.predict(X_test)
     y_prob = model.predict_proba(X_test)[:, 1]
+
+    # Find F1-optimal threshold
+    precs, recs, threshs = precision_recall_curve(y_test, y_prob)
+    denom = precs[:-1] + recs[:-1]
+    f1s = np.where(denom > 0, 2 * precs[:-1] * recs[:-1] / denom, 0.0)
+    best_idx = int(np.argmax(f1s))
+    optimal_threshold = float(threshs[best_idx])
+
+    y_pred = (y_prob >= optimal_threshold).astype(int)
+    cm = sk_confusion_matrix(y_test, y_pred)
+    tn, fp, fn, tp = cm.ravel()
+
+    # Downsample PR curve to ~50 points so metrics.json stays small
+    step = max(1, len(precs) // 50)
+    pr_curve = [
+        {"recall": round(float(r), 4), "precision": round(float(p), 4)}
+        for p, r in zip(precs[::step], recs[::step])
+    ]
+
     return {
         "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
         "precision": round(float(precision_score(y_test, y_pred, zero_division=0)), 4),
         "recall": round(float(recall_score(y_test, y_pred, zero_division=0)), 4),
         "f1": round(float(f1_score(y_test, y_pred, zero_division=0)), 4),
         "auc_roc": round(float(roc_auc_score(y_test, y_prob)), 4),
+        "pr_auc": round(float(average_precision_score(y_test, y_prob)), 4),
+        "optimal_threshold": round(optimal_threshold, 4),
+        "confusion_matrix": {"tn": int(tn), "fp": int(fp), "fn": int(fn), "tp": int(tp)},
+        "pr_curve": pr_curve,
     }
 
 
@@ -111,6 +138,16 @@ def train(
 
     _update_status("running", 90, "Saving pipeline and metrics...")
     pipeline.save(os.path.join(model_dir, "pipeline.pkl"))
+
+    n_fraud = int(y_all.sum())
+    metrics["_meta"] = {
+        "trained_at": dt.utcnow().isoformat() + "Z",
+        "n_samples": int(len(y_all)),
+        "n_fraud": n_fraud,
+        "n_legit": int(len(y_all)) - n_fraud,
+        "smote_samples_added": int(len(X_train_res) - len(X_train)),
+        "features": list(FEATURE_COLS),
+    }
 
     metrics_path = os.path.join(model_dir, "metrics.json")
     with open(metrics_path, "w") as f:
