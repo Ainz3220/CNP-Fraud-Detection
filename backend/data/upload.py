@@ -4,14 +4,14 @@ import pandas as pd
 from fastapi import HTTPException
 
 REQUIRED_COLS_PREDICT = {
-    "amt", "category", "state",
+    "amt", "category",
 }
 
 REQUIRED_COLS_RETRAIN = REQUIRED_COLS_PREDICT | {"is_fraud"}
 
 OPTIONAL_COLS = {
     "trans_date_trans_time", "cc_num", "merchant", "gender", "city", "zip",
-    "lat", "long", "city_pop", "job", "dob", "trans_num", "unix_time",
+    "lat", "long", "job", "dob", "trans_num", "unix_time",
     "merch_lat", "merch_long",
 }
 

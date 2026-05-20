@@ -68,9 +68,12 @@ export default function History() {
   const exportCsv = async () => {
     const params = { ...filters, limit: 10000, page: 1 }
     const result = await getHistory(params)
-    const headers = ['id', 'timestamp', 'amount', 'category', 'model_used', 'fraud_probability', 'verdict', 'main_reason']
+    const headers = ['id', 'timestamp', 'amount_mur', 'category', 'model_used', 'fraud_probability', 'verdict', 'main_reason']
     const rows = result.items.map(r =>
-      headers.map(h => JSON.stringify(r[h] ?? '')).join(',')
+      headers.map(h => {
+        if (h === 'amount_mur') return JSON.stringify((parseFloat(r.amount || 0) * 49).toFixed(2))
+        return JSON.stringify(r[h] ?? '')
+      }).join(',')
     )
     const csv = [headers.join(','), ...rows].join('\n')
     const blob = new Blob([csv], { type: 'text/csv' })
@@ -133,7 +136,7 @@ export default function History() {
             <thead className="bg-gray-50 dark:bg-gray-800/50">
               <tr className="border-b border-gray-200 dark:border-gray-700">
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Timestamp</th>
-                <th className="text-right px-4 py-3 font-medium text-gray-500">Amount</th>
+                <th className="text-right px-4 py-3 font-medium text-gray-500">Amount (MUR)</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Category</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Model</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-500">Fraud Prob.</th>
@@ -165,7 +168,7 @@ export default function History() {
                       <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
                         {row.timestamp ? new Date(row.timestamp).toLocaleString() : '—'}
                       </td>
-                      <td className="px-4 py-3 text-right font-mono">${parseFloat(row.amount || 0).toFixed(2)}</td>
+                      <td className="px-4 py-3 text-right font-mono">MUR {(parseFloat(row.amount || 0) * 49).toFixed(2)}</td>
                       <td className="px-4 py-3 capitalize">{row.category || '—'}</td>
                       <td className="px-4 py-3 uppercase text-xs">{MODEL_LABELS[row.model_used] || row.model_used}</td>
                       <td className="px-4 py-3 text-right font-mono">

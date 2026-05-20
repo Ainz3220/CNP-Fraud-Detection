@@ -1,15 +1,13 @@
 import React from 'react'
 
 const FEATURE_LABELS = {
-  amt: 'Amount',
+  amt: 'Amount (MUR)',
   hour_of_day: 'Hour of Day',
   distance_from_home: 'Distance from Home',
   category: 'Merchant Category',
   age: 'Cardholder Age',
   amt_zscore: 'Amount Z-Score',
-  city_pop: 'City Population',
   gender: 'Gender',
-  state: 'State',
 }
 
 export default function FeatureBar({ features = [] }) {

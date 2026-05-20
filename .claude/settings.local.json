@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-ChildItem -Recurse \"c:\\\\Codes\\\\CNP-Fraud-Detection\" -Depth 3)",
+      "Bash(Select-Object FullName)",
+      "Bash(Format-Table -AutoSize)",
+      "Bash(python -c ' *)",
+      "Bash(.venv/Scripts/python -c ' *)",
+      "Bash(\"../../backend/.venv/Scripts/python\" gen_finetune.py)",
+      "Bash(../../backend/.venv/Scripts/python -c ' *)"
+    ]
+  }
+}

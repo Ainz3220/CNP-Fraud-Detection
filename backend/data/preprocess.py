@@ -9,8 +9,8 @@ import joblib
 from utils.feature_engineering import engineer_features, build_category_stats
 
 
-CATEGORICAL_COLS = ["category", "gender", "state"]
-NUMERIC_COLS = ["amt", "city_pop", "hour_of_day", "age", "distance_from_home", "amt_zscore"]
+CATEGORICAL_COLS = ["category", "gender"]
+NUMERIC_COLS = ["amt", "hour_of_day", "age", "distance_from_home", "amt_zscore"]
 FEATURE_COLS = NUMERIC_COLS + CATEGORICAL_COLS
 
 
@@ -32,23 +32,12 @@ def build_home_coords(df: pd.DataFrame) -> dict:
     return coords.to_dict("index")
 
 
-def build_state_coords(df: pd.DataFrame) -> dict:
-    """Fallback: state -> (median_lat, median_lon)."""
-    coords = (
-        df.groupby("state")[["lat", "long"]]
-        .median()
-        .rename(columns={"lat": "home_lat", "long": "home_lon"})
-    )
-    return coords.to_dict("index")
-
-
 class PreprocessingPipeline:
     def __init__(self):
         self.scalers: dict[str, StandardScaler] = {}
         self.encoders: dict[str, LabelEncoder] = {}
         self.category_stats: dict = {}
         self.home_coords: dict = {}
-        self.state_coords: dict = {}
         self.fitted = False
 
     def fit(self, df: pd.DataFrame):
@@ -57,7 +46,6 @@ class PreprocessingPipeline:
         # Re-engineer with proper stats
         df = engineer_features(df, self.category_stats)
         self.home_coords = build_home_coords(df)
-        self.state_coords = build_state_coords(df)
 
         for col in NUMERIC_COLS:
             if col in df.columns:
@@ -113,14 +101,10 @@ def resolve_home_coords(
     state: str,
     pipeline: "PreprocessingPipeline",
 ) -> tuple[float, float]:
-    """Return (home_lat, home_lon) for a cardholder, falling back to state median."""
+    """Return (home_lat, home_lon) for a cardholder, falling back to Mauritius centre."""
     key = str(cc_num) if cc_num else None
     if key and key in pipeline.home_coords:
         rec = pipeline.home_coords[key]
         return rec["home_lat"], rec["home_lon"]
-    state_key = str(state) if state else None
-    if state_key and state_key in pipeline.state_coords:
-        rec = pipeline.state_coords[state_key]
-        return rec["home_lat"], rec["home_lon"]
-    # Ultimate fallback — geographic centre of the contiguous US
-    return 39.5, -98.35
+    # Fallback — geographic centre of Mauritius (Port Louis area)
+    return -20.1654, 57.4896

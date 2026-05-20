@@ -147,7 +147,7 @@ export default function Dashboard({ modelsLoaded }) {
               <thead>
                 <tr className="border-b border-gray-200 dark:border-gray-700 text-left">
                   <th className="py-2 pr-4 font-medium text-gray-500">Time</th>
-                  <th className="py-2 pr-4 font-medium text-gray-500">Amount</th>
+                  <th className="py-2 pr-4 font-medium text-gray-500">Amount (MUR)</th>
                   <th className="py-2 pr-4 font-medium text-gray-500">Category</th>
                   <th className="py-2 pr-4 font-medium text-gray-500">Model</th>
                   <th className="py-2 font-medium text-gray-500">Verdict</th>
@@ -159,7 +159,7 @@ export default function Dashboard({ modelsLoaded }) {
                     <td className="py-2 pr-4 text-gray-500 text-xs">
                       {r.timestamp ? new Date(r.timestamp).toLocaleString() : '—'}
                     </td>
-                    <td className="py-2 pr-4">${parseFloat(r.amount || 0).toFixed(2)}</td>
+                    <td className="py-2 pr-4">MUR {(parseFloat(r.amount || 0) * 49).toFixed(2)}</td>
                     <td className="py-2 pr-4 capitalize">{r.category || '—'}</td>
                     <td className="py-2 pr-4 uppercase text-xs">{r.model_used}</td>
                     <td className="py-2">

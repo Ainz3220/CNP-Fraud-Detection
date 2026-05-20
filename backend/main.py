@@ -116,9 +116,7 @@ class TransactionInput(BaseModel):
     category: str
     hour_of_day: Optional[int] = 12
     age: Optional[int] = 40
-    state: Optional[str] = "TX"
     distance_from_home: Optional[float] = None
-    city_pop: Optional[int] = 50000
     gender: Optional[str] = "M"
     cc_num: Optional[str] = None
     lat: Optional[float] = None

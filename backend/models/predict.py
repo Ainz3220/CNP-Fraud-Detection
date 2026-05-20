@@ -8,6 +8,7 @@ import pandas as pd
 
 from data.preprocess import PreprocessingPipeline, resolve_home_coords, FEATURE_COLS
 from models.explain import get_shap_values, top_features
+from utils.feature_engineering import engineer_features as _eng_features
 from utils.text_explainer import generate_explanation
 
 logger = logging.getLogger(__name__)
@@ -36,14 +37,27 @@ def majority_vote(verdicts: List[str]) -> str:
     return "APPROVED"
 
 
+def _raw_feature_row(df: pd.DataFrame, pipeline: PreprocessingPipeline) -> np.ndarray:
+    """Return feature values *before* scaling/encoding for use in explanations.
+
+    Categorical columns are kept as their original string values so the text
+    explainer can match them by name (e.g. 'grocery_pos'). Numeric columns
+    are the engineered floats (e.g. real amt in USD, real age, real distance).
+    """
+    eng_df = _eng_features(df.copy(), pipeline.category_stats)
+    row = []
+    for col in FEATURE_COLS:
+        row.append(eng_df[col].iloc[0] if col in eng_df.columns else 0)
+    return np.array(row, dtype=object)
+
+
 def _build_input_df(transaction: dict, pipeline: PreprocessingPipeline) -> pd.DataFrame:
     """Convert raw transaction dict into a single-row DataFrame with all needed columns."""
     row = dict(transaction)
 
     # Resolve home coordinates
     cc_num = row.get("cc_num")
-    state = row.get("state", "")
-    home_lat, home_lon = resolve_home_coords(cc_num, state, pipeline)
+    home_lat, home_lon = resolve_home_coords(cc_num, None, pipeline)
 
     if row.get("lat") is None:
         row["lat"] = home_lat
@@ -71,6 +85,7 @@ def predict_single(
     selected_models = selected_models or list(models.keys())
     df = _build_input_df(transaction, pipeline)
     X = pipeline.transform(df)
+    raw_display_row = _raw_feature_row(df, pipeline)
 
     model_results = []
     verdicts = []
@@ -85,8 +100,7 @@ def predict_single(
 
         shap_vals = get_shap_values(name, model, X)
         shap_row = shap_vals[0]
-        raw_row = X[0]
-        features = top_features(shap_row, raw_row, top_n=8)
+        features = top_features(shap_row, raw_display_row, top_n=8)
         context = {"category": transaction.get("category", "")}
         explanation = generate_explanation(features, is_fraud=(prob >= 0.40), context=context)
 
@@ -135,8 +149,7 @@ def predict_batch(
     # Resolve home coords for each row
     def _resolve(row):
         cc = row.get("cc_num")
-        state = row.get("state", "")
-        hl, hlo = resolve_home_coords(cc, state, pipeline)
+        hl, hlo = resolve_home_coords(cc, None, pipeline)
         if "lat" not in row or pd.isna(row.get("lat")):
             row["lat"] = hl
         if "long" not in row or pd.isna(row.get("long")):

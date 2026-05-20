@@ -10,21 +10,12 @@ const CATEGORIES = [
   'misc_pos', 'personal_care', 'shopping_pos', 'travel',
 ]
 
-const US_STATES = [
-  'AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA',
-  'KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ',
-  'NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT',
-  'VA','WA','WV','WI','WY',
-]
-
 const DEFAULT_FORM = {
   amt: '',
   category: 'grocery_pos',
   hour_of_day: 12,
   age: '',
-  state: 'TX',
   distance_from_home: '',
-  city_pop: '',
   gender: 'M',
 }
 
@@ -47,10 +38,9 @@ export default function Predict({ modelsLoaded }) {
     try {
       const payload = {
         ...form,
-        amt: parseFloat(form.amt),
+        amt: parseFloat(form.amt) / 49,
         hour_of_day: parseInt(form.hour_of_day),
         age: parseInt(form.age) || 40,
-        city_pop: parseInt(form.city_pop) || 50000,
         distance_from_home: form.distance_from_home !== '' ? parseFloat(form.distance_from_home) : null,
       }
       const res = await predictTransaction(payload, selectedModels.join(','))
@@ -71,13 +61,13 @@ export default function Predict({ modelsLoaded }) {
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid sm:grid-cols-2 gap-4">
             <div>
-              <label className="label">Transaction Amount (USD)</label>
+              <label className="label">Transaction Amount (MUR)</label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 required
-                placeholder="e.g. 149.99"
+                placeholder="e.g. 7350.00"
                 className="input"
                 value={form.amt}
                 onChange={e => handleChange('amt', e.target.value)}
@@ -122,13 +112,6 @@ export default function Predict({ modelsLoaded }) {
             </div>
 
             <div>
-              <label className="label">Transaction State</label>
-              <select className="input" value={form.state} onChange={e => handleChange('state', e.target.value)}>
-                {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
-              </select>
-            </div>
-
-            <div>
               <label className="label">Distance from Home (miles)</label>
               <input
                 type="number"
@@ -138,18 +121,6 @@ export default function Predict({ modelsLoaded }) {
                 className="input"
                 value={form.distance_from_home}
                 onChange={e => handleChange('distance_from_home', e.target.value)}
-              />
-            </div>
-
-            <div>
-              <label className="label">City Population</label>
-              <input
-                type="number"
-                min="1"
-                placeholder="e.g. 150000"
-                className="input"
-                value={form.city_pop}
-                onChange={e => handleChange('city_pop', e.target.value)}
               />
             </div>
 

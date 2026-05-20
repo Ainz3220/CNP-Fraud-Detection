@@ -47,12 +47,13 @@ def explain_feature(
     if feature == "amt":
         pct = abs(round(shap_val * 100, 1))
         category = context.get("category", "this category")
+        mur_amount = float(value) * 49
         if is_fraud:
             return (
-                f"Transaction amount of ${float(value):.2f} is {pct}% {direction} average "
+                f"Transaction amount of MUR {mur_amount:.2f} is {pct}% {direction} average "
                 f"for {category} transactions. {level} FRAUD INDICATOR."
             )
-        return f"Transaction amount of ${float(value):.2f} is within normal range for {category} transactions. SUPPORTS LEGITIMACY."
+        return f"Transaction amount of MUR {mur_amount:.2f} is within normal range for {category} transactions. SUPPORTS LEGITIMACY."
 
     if feature == "hour_of_day":
         hour = int(value)
@@ -92,12 +93,6 @@ def explain_feature(
         if is_fraud:
             return f"Transaction amount is {z} standard deviations from the mean for this category. {level} FRAUD INDICATOR."
         return "Transaction amount is within normal statistical range for this category. SUPPORTS LEGITIMACY."
-
-    if feature == "city_pop":
-        pop = int(value)
-        if is_fraud:
-            return f"City population ({pop:,}) is atypical for this cardholder's region. {level} FRAUD INDICATOR."
-        return f"City population ({pop:,}) is consistent with cardholder profile. SUPPORTS LEGITIMACY."
 
     # Generic fallback
     if is_fraud:

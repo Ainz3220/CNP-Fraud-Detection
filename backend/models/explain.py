@@ -57,10 +57,16 @@ def get_shap_values(
 
 def top_features(
     shap_row: np.ndarray,
-    raw_values: np.ndarray,
+    raw_values,
     top_n: int = 8,
 ) -> List[Tuple[str, float, object]]:
-    """Return (feature_name, shap_value, raw_value) sorted by |shap| descending."""
-    pairs = list(zip(FEATURE_COLS, shap_row.tolist(), raw_values.tolist()))
+    """Return (feature_name, shap_value, raw_value) sorted by |shap| descending.
+
+    raw_values may be a numpy numeric array (scaled) or an object array
+    containing the original pre-scaling values including string categoricals.
+    """
+    shap_list = shap_row.tolist()
+    raw_list = list(raw_values) if not isinstance(raw_values, list) else raw_values
+    pairs = list(zip(FEATURE_COLS, shap_list, raw_list))
     pairs.sort(key=lambda x: abs(x[1]), reverse=True)
     return pairs[:top_n]

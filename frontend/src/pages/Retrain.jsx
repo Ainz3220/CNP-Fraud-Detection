@@ -15,7 +15,7 @@ const STATUS_STEPS = [
 
 const SCHEMA_COLS = [
   'trans_date_trans_time', 'cc_num', 'merchant', 'category', 'amt',
-  'gender', 'city', 'state', 'zip', 'lat', 'long', 'city_pop',
+  'gender', 'city', 'zip', 'lat', 'long',
   'job', 'dob', 'trans_num', 'unix_time', 'merch_lat', 'merch_long', 'is_fraud',
 ]
 

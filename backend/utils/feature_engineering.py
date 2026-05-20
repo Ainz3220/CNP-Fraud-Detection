@@ -57,10 +57,20 @@ def engineer_features(df: pd.DataFrame, category_stats: dict = None) -> pd.DataF
         df["age"] = 40
 
     if all(c in df.columns for c in ["lat", "long", "merch_lat", "merch_long"]):
-        df["distance_from_home"] = df.apply(
-            lambda r: haversine_distance(r["lat"], r["long"], r["merch_lat"], r["merch_long"]),
-            axis=1,
-        )
+        if "distance_from_home" not in df.columns:
+            # Compute for all rows (training path — no pre-supplied values)
+            df["distance_from_home"] = df.apply(
+                lambda r: haversine_distance(r["lat"], r["long"], r["merch_lat"], r["merch_long"]),
+                axis=1,
+            )
+        else:
+            # Fill only rows where distance wasn't explicitly supplied (null/NaN)
+            mask = df["distance_from_home"].isna()
+            if mask.any():
+                df.loc[mask, "distance_from_home"] = df[mask].apply(
+                    lambda r: haversine_distance(r["lat"], r["long"], r["merch_lat"], r["merch_long"]),
+                    axis=1,
+                )
     elif "distance_from_home" not in df.columns:
         df["distance_from_home"] = 0.0
 
