@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Models & data (large files)
+backend/saved_models/
+backend/data/*.csv
+backend/data/*.pkl
+backend/fraud_detection.db
+
+# Environment
+.env
+.env.local
+
+# Node
+node_modules/
+frontend/dist/
+frontend/.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp

@@ -1,0 +1,5 @@
+remove City Population everywhere as it does not match what i want to achive
+Transaction State remove as i want it do for mauritius only
+
+i think the model are predicting correctly
+convert all amount in mur use 1 USD = 49 MUR

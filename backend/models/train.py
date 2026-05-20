@@ -1,0 +1,164 @@
+"""Train LR, RF, and XGBoost fraud detection models with SMOTE."""
+
+import json
+import logging
+import os
+from pathlib import Path
+from typing import Dict, Tuple
+
+import joblib
+import numpy as np
+import pandas as pd
+from imblearn.over_sampling import SMOTE
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from xgboost import XGBClassifier
+
+from data.preprocess import PreprocessingPipeline, load_raw_data, FEATURE_COLS
+
+logger = logging.getLogger(__name__)
+
+MODEL_NAMES = ["lr", "rf", "xgb"]
+
+_TRAINING_STATUS = {"status": "idle", "progress": 0, "message": ""}
+
+
+def get_training_status() -> dict:
+    return dict(_TRAINING_STATUS)
+
+
+def _update_status(status: str, progress: int, message: str):
+    _TRAINING_STATUS["status"] = status
+    _TRAINING_STATUS["progress"] = progress
+    _TRAINING_STATUS["message"] = message
+    logger.info(f"[Training] {message} ({progress}%)")
+
+
+def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> dict:
+    y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test)[:, 1]
+    return {
+        "accuracy": round(float(accuracy_score(y_test, y_pred)), 4),
+        "precision": round(float(precision_score(y_test, y_pred, zero_division=0)), 4),
+        "recall": round(float(recall_score(y_test, y_pred, zero_division=0)), 4),
+        "f1": round(float(f1_score(y_test, y_pred, zero_division=0)), 4),
+        "auc_roc": round(float(roc_auc_score(y_test, y_prob)), 4),
+    }
+
+
+def build_models() -> dict:
+    return {
+        "lr": LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced"),
+        "rf": RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1),
+        "xgb": XGBClassifier(
+            n_estimators=100,
+            random_state=42,
+            use_label_encoder=False,
+            eval_metric="logloss",
+            tree_method="hist",
+        ),
+    }
+
+
+def train(
+    train_path: str,
+    test_path: str = None,
+    model_dir: str = "./saved_models",
+    extra_df: pd.DataFrame = None,
+) -> Dict:
+    """
+    Full training pipeline. Returns metrics dict keyed by model name.
+    If extra_df is provided it is merged with the CSV data before training.
+    """
+    Path(model_dir).mkdir(parents=True, exist_ok=True)
+
+    _update_status("running", 5, "Loading dataset...")
+    df = load_raw_data(train_path, test_path)
+    if extra_df is not None:
+        df = pd.concat([df, extra_df], ignore_index=True)
+
+    if "is_fraud" not in df.columns:
+        raise ValueError("Dataset must contain an 'is_fraud' column.")
+
+    _update_status("running", 15, "Engineering features...")
+    pipeline = PreprocessingPipeline()
+    X_all = pipeline.fit_transform(df)
+    y_all = df["is_fraud"].values
+
+    # Train / validation split (last 20% as val)
+    split = int(len(X_all) * 0.8)
+    X_train, X_val = X_all[:split], X_all[split:]
+    y_train, y_val = y_all[:split], y_all[split:]
+
+    _update_status("running", 25, "Applying SMOTE...")
+    smote = SMOTE(random_state=42)
+    X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
+
+    models = build_models()
+    metrics = {}
+    model_steps = {"lr": (30, 50), "rf": (50, 70), "xgb": (70, 90)}
+
+    for name, (start_pct, end_pct) in model_steps.items():
+        label_map = {"lr": "Logistic Regression", "rf": "Random Forest", "xgb": "XGBoost"}
+        _update_status("running", start_pct, f"Training {label_map[name]}...")
+        model = models[name]
+        model.fit(X_train_res, y_train_res)
+        _update_status("running", end_pct, f"Evaluating {label_map[name]}...")
+        metrics[name] = evaluate_model(model, X_val, y_val)
+        joblib.dump(model, os.path.join(model_dir, f"{name}_model.pkl"))
+        logger.info(f"{label_map[name]} metrics: {metrics[name]}")
+
+    _update_status("running", 90, "Saving pipeline and metrics...")
+    pipeline.save(os.path.join(model_dir, "pipeline.pkl"))
+
+    metrics_path = os.path.join(model_dir, "metrics.json")
+    with open(metrics_path, "w") as f:
+        json.dump(metrics, f, indent=2)
+
+    _update_status("done", 100, "Training complete.")
+    return metrics
+
+
+def retrain_with_new_data(
+    original_train_path: str,
+    new_data_df: pd.DataFrame,
+    model_dir: str = "./saved_models",
+) -> dict:
+    """Merge original + new data, retrain all models, return before/after metrics."""
+    # Load before metrics
+    metrics_path = os.path.join(model_dir, "metrics.json")
+    before_metrics = {}
+    if os.path.exists(metrics_path):
+        with open(metrics_path) as f:
+            before_metrics = json.load(f)
+
+    after_metrics = train(
+        train_path=original_train_path,
+        model_dir=model_dir,
+        extra_df=new_data_df,
+    )
+
+    comparison = {}
+    for name in MODEL_NAMES:
+        comparison[name] = {
+            "model_name": name,
+            "before": before_metrics.get(name, {}),
+            "after": after_metrics.get(name, {}),
+        }
+    return comparison
+
+
+def models_exist(model_dir: str) -> bool:
+    required = ["lr_model.pkl", "rf_model.pkl", "xgb_model.pkl", "pipeline.pkl", "metrics.json"]
+    return all(os.path.exists(os.path.join(model_dir, f)) for f in required)
+
+
+def load_all_models(model_dir: str) -> Tuple[dict, "PreprocessingPipeline", dict]:
+    models = {}
+    for name in MODEL_NAMES:
+        models[name] = joblib.load(os.path.join(model_dir, f"{name}_model.pkl"))
+    pipeline = PreprocessingPipeline.load(os.path.join(model_dir, "pipeline.pkl"))
+    with open(os.path.join(model_dir, "metrics.json")) as f:
+        metrics = json.load(f)
+    return models, pipeline, metrics
