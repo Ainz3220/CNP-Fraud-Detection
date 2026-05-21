@@ -234,14 +234,23 @@ def retrain_with_new_data(
 
 
 def models_exist(model_dir: str) -> bool:
-    required = ["lr_model.pkl", "rf_model.pkl", "xgb_model.pkl", "pipeline.pkl", "metrics.json"]
-    return all(os.path.exists(os.path.join(model_dir, f)) for f in required)
+    base = ["pipeline.pkl", "metrics.json"]
+    if not all(os.path.exists(os.path.join(model_dir, f)) for f in base):
+        return False
+    return any(
+        os.path.exists(os.path.join(model_dir, f"{name}_model.pkl"))
+        for name in MODEL_NAMES
+    )
 
 
 def load_all_models(model_dir: str) -> Tuple[dict, "PreprocessingPipeline", dict]:
     models = {}
     for name in MODEL_NAMES:
-        models[name] = joblib.load(os.path.join(model_dir, f"{name}_model.pkl"))
+        path = os.path.join(model_dir, f"{name}_model.pkl")
+        if os.path.exists(path):
+            models[name] = joblib.load(path)
+    if not models:
+        raise FileNotFoundError(f"No model .pkl files found in {model_dir}")
     pipeline = PreprocessingPipeline.load(os.path.join(model_dir, "pipeline.pkl"))
     with open(os.path.join(model_dir, "metrics.json")) as f:
         metrics = json.load(f)
