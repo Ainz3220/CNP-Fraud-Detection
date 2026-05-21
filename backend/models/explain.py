@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from xgboost import XGBClassifier
 
-from data.preprocess import FEATURE_COLS
+from datautils.preprocess import FEATURE_COLS
 
 logger = logging.getLogger(__name__)
 

@@ -21,7 +21,7 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier
 
-from data.preprocess import PreprocessingPipeline, load_raw_data, FEATURE_COLS  # noqa: F401 (used in _meta)
+from datautils.preprocess import PreprocessingPipeline, load_raw_data, FEATURE_COLS  # noqa: F401 (used in _meta)
 
 logger = logging.getLogger(__name__)
 

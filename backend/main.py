@@ -33,7 +33,7 @@ from database.db import get_db, init_db
 from database.models import Prediction
 
 # ── ML ────────────────────────────────────────────────────────────────────────
-from data.upload import validate_predict_csv, validate_retrain_csv
+from datautils.upload import validate_predict_csv, validate_retrain_csv
 from models.train import (
     get_training_status,
     load_all_models,
