@@ -7,7 +7,12 @@
       "Bash(python -c ' *)",
       "Bash(.venv/Scripts/python -c ' *)",
       "Bash(\"../../backend/.venv/Scripts/python\" gen_finetune.py)",
-      "Bash(../../backend/.venv/Scripts/python -c ' *)"
+      "Bash(../../backend/.venv/Scripts/python -c ' *)",
+      "Bash(npm install *)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(git -C /c/Codes/CNP-Fraud-Detection ls-files backend/saved_models/)"
     ]
   }
 }
