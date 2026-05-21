@@ -116,7 +116,10 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> dict:
 def build_models() -> dict:
     return {
         "lr": LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced"),
-        "rf": RandomForestClassifier(n_estimators=100, random_state=42, n_jobs=-1),
+        "rf": RandomForestClassifier(
+            n_estimators=50, max_depth=20, min_samples_leaf=5,
+            random_state=42, n_jobs=-1,
+        ),
         "xgb": XGBClassifier(
             n_estimators=100,
             random_state=42,
