@@ -13,7 +13,7 @@ from typing import List, Optional
 import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 
 MODEL_DIR = os.getenv("MODEL_DIR", "./saved_models")
 DATA_DIR = os.getenv("DATA_DIR", "./data")
+UPLOAD_SECRET = os.getenv("UPLOAD_SECRET", "")
 
 # ── Database ──────────────────────────────────────────────────────────────────
 from database.db import get_db, init_db
@@ -166,6 +167,44 @@ def get_metrics():
                 return json.load(f)
         raise HTTPException(status_code=404, detail="Metrics not available yet.")
     return _metrics
+
+
+@app.post("/api/models/upload")
+async def upload_models(
+    files: List[UploadFile] = File(...),
+    x_upload_secret: Optional[str] = Header(default=None),
+):
+    """
+    Accept pre-trained model files uploaded from a local machine.
+    Expects: lr_model.pkl, rf_model.pkl, xgb_model.pkl, pipeline.pkl, metrics.json
+    Protected by the X-Upload-Secret header (must match UPLOAD_SECRET env var).
+    """
+    if UPLOAD_SECRET and x_upload_secret != UPLOAD_SECRET:
+        raise HTTPException(status_code=401, detail="Invalid or missing X-Upload-Secret header.")
+
+    allowed = {"lr_model.pkl", "rf_model.pkl", "xgb_model.pkl", "pipeline.pkl", "metrics.json"}
+    saved = []
+
+    Path(MODEL_DIR).mkdir(parents=True, exist_ok=True)
+    for f in files:
+        if f.filename not in allowed:
+            raise HTTPException(status_code=400, detail=f"Unexpected file: {f.filename}. Allowed: {sorted(allowed)}")
+        dest = os.path.join(MODEL_DIR, f.filename)
+        content = await f.read()
+        with open(dest, "wb") as out:
+            out.write(content)
+        saved.append(f.filename)
+        logger.info(f"Uploaded model file: {f.filename} ({len(content):,} bytes)")
+
+    # Reload models into memory if all required files are now present
+    global _models, _pipeline, _metrics, _models_loaded
+    if models_exist(MODEL_DIR):
+        invalidate_cache()
+        _models_loaded = False  # force reload
+        _load_models()
+        logger.info("Models reloaded after upload.")
+
+    return {"uploaded": saved, "models_loaded": _models_loaded}
 
 
 @app.post("/api/predict")
