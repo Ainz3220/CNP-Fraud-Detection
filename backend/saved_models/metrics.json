@@ -297,7 +297,7 @@
       },
       {
         "recall": 0.9918,
-        "precision": 0.0416
+        "precision": 0.0415
       },
       {
         "recall": 0.9918,
@@ -373,7 +373,7 @@
       },
       {
         "recall": 0.9785,
-        "precision": 0.0998
+        "precision": 0.0997
       },
       {
         "recall": 0.9763,
@@ -381,7 +381,7 @@
       },
       {
         "recall": 0.9763,
-        "precision": 0.1134
+        "precision": 0.1133
       },
       {
         "recall": 0.9748,
@@ -389,54 +389,54 @@
       },
       {
         "recall": 0.9718,
-        "precision": 0.1311
+        "precision": 0.131
       },
       {
         "recall": 0.9696,
-        "precision": 0.1422
+        "precision": 0.1421
       },
       {
         "recall": 0.9681,
-        "precision": 0.1558
+        "precision": 0.1557
       },
       {
         "recall": 0.9629,
-        "precision": 0.1716
+        "precision": 0.1715
       },
       {
         "recall": 0.9577,
-        "precision": 0.191
+        "precision": 0.1908
       },
       {
         "recall": 0.9511,
-        "precision": 0.2149
+        "precision": 0.2147
       },
       {
         "recall": 0.9392,
-        "precision": 0.245
+        "precision": 0.2447
       },
       {
         "recall": 0.934,
-        "precision": 0.2879
+        "precision": 0.2875
       },
       {
         "recall": 0.917,
-        "precision": 0.3457
+        "precision": 0.345
       },
       {
         "recall": 0.9021,
-        "precision": 0.4382
+        "precision": 0.4373
       },
       {
         "recall": 0.8762,
-        "precision": 0.5967
+        "precision": 0.5949
       },
       {
-        "recall": 0.7317,
-        "precision": 0.8322
+        "recall": 0.7346,
+        "precision": 0.8314
       },
       {
-        "recall": 0.1831,
+        "recall": 0.192,
         "precision": 1.0
       }
     ]
@@ -663,7 +663,7 @@
     ]
   },
   "_meta": {
-    "trained_at": "2026-05-21T15:10:02.775650Z",
+    "trained_at": "2026-05-21T18:42:51.322614Z",
     "n_samples": 1852394,
     "n_fraud": 9651,
     "n_legit": 1842743,
