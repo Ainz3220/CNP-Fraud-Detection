@@ -12,7 +12,7 @@ venv/
 env/
 
 # Models & data (large files)
-backend/saved_models/
+# backend/saved_models/
 backend/data/*.csv
 backend/data/*.pkl
 backend/fraud_detection.db

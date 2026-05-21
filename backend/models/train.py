@@ -1,11 +1,12 @@
 """Train LR, RF, and XGBoost fraud detection models with SMOTE."""
 
+import hashlib
 import json
 import logging
 import os
 from datetime import datetime as dt
 from pathlib import Path
-from typing import Dict, Tuple
+from typing import Dict, Optional, Tuple
 
 import joblib
 import numpy as np
@@ -33,6 +34,43 @@ def get_training_status() -> dict:
     return dict(_TRAINING_STATUS)
 
 
+# ---------------------------------------------------------------------------
+# Preprocessing cache helpers
+# ---------------------------------------------------------------------------
+
+_CACHE_FILE = "preprocess_cache.pkl"
+
+
+def _data_hash(train_path: str, test_path: Optional[str], extra_df: Optional[pd.DataFrame]) -> str:
+    h = hashlib.md5()
+    for path in (train_path, test_path):
+        if path and os.path.exists(path):
+            stat = os.stat(path)
+            h.update(f"{path}:{stat.st_size}:{stat.st_mtime}".encode())
+    if extra_df is not None:
+        h.update(pd.util.hash_pandas_object(extra_df, index=True).values.tobytes())
+    return h.hexdigest()
+
+
+def _load_cache(model_dir: str, expected_hash: str) -> Optional[Tuple]:
+    path = os.path.join(model_dir, _CACHE_FILE)
+    if not os.path.exists(path):
+        return None
+    try:
+        cached = joblib.load(path)
+        if cached.get("hash") != expected_hash:
+            return None
+        return cached["pipeline"], cached["X_all"], cached["y_all"]
+    except Exception:
+        return None
+
+
+def _save_cache(model_dir: str, data_hash: str, pipeline: PreprocessingPipeline,
+                X_all: np.ndarray, y_all: np.ndarray):
+    path = os.path.join(model_dir, _CACHE_FILE)
+    joblib.dump({"hash": data_hash, "pipeline": pipeline, "X_all": X_all, "y_all": y_all}, path)
+
+
 def _update_status(status: str, progress: int, message: str):
     _TRAINING_STATUS["status"] = status
     _TRAINING_STATUS["progress"] = progress
@@ -46,7 +84,8 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> dict:
     # Find F1-optimal threshold
     precs, recs, threshs = precision_recall_curve(y_test, y_prob)
     denom = precs[:-1] + recs[:-1]
-    f1s = np.where(denom > 0, 2 * precs[:-1] * recs[:-1] / denom, 0.0)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        f1s = np.where(denom > 0, 2 * precs[:-1] * recs[:-1] / denom, 0.0)
     best_idx = int(np.argmax(f1s))
     optimal_threshold = float(threshs[best_idx])
 
@@ -100,18 +139,23 @@ def train(
     """
     Path(model_dir).mkdir(parents=True, exist_ok=True)
 
-    _update_status("running", 5, "Loading dataset...")
-    df = load_raw_data(train_path, test_path)
-    if extra_df is not None:
-        df = pd.concat([df, extra_df], ignore_index=True)
-
-    if "is_fraud" not in df.columns:
-        raise ValueError("Dataset must contain an 'is_fraud' column.")
-
-    _update_status("running", 15, "Engineering features...")
-    pipeline = PreprocessingPipeline()
-    X_all = pipeline.fit_transform(df)
-    y_all = df["is_fraud"].values
+    data_hash = _data_hash(train_path, test_path, extra_df)
+    cached = _load_cache(model_dir, data_hash)
+    if cached:
+        pipeline, X_all, y_all = cached
+        logger.info("Loaded preprocessed data from cache — skipping feature engineering.")
+    else:
+        _update_status("running", 5, "Loading dataset...")
+        df = load_raw_data(train_path, test_path)
+        if extra_df is not None:
+            df = pd.concat([df, extra_df], ignore_index=True)
+        if "is_fraud" not in df.columns:
+            raise ValueError("Dataset must contain an 'is_fraud' column.")
+        _update_status("running", 15, "Engineering features...")
+        pipeline = PreprocessingPipeline()
+        X_all = pipeline.fit_transform(df)
+        y_all = df["is_fraud"].values
+        _save_cache(model_dir, data_hash, pipeline, X_all, y_all)
 
     # Train / validation split (last 20% as val)
     split = int(len(X_all) * 0.8)
