@@ -2,6 +2,8 @@
 
 A full-stack Card-Not-Present (CNP) fraud detection web application with a **React** frontend and **FastAPI** Python backend, deployable on Railway.
 
+---
+
 ## Architecture
 
 ```
@@ -9,30 +11,42 @@ CNP-Fraud-Detection/
 ├── backend/                  # FastAPI Python API
 │   ├── main.py               # App entry point & all endpoints
 │   ├── models/
-│   │   ├── train.py          # LR, RF, XGBoost training with SMOTE
+│   │   ├── train.py          # LR, RF, XGBoost training pipeline
 │   │   ├── predict.py        # Single & batch prediction logic
 │   │   └── explain.py        # SHAP attribution (Tree/Linear explainers)
+│   ├── datautils/
+│   │   ├── preprocess.py     # PreprocessingPipeline (fit/transform/save/load)
+│   │   └── upload.py         # CSV validation helpers
 │   ├── data/
-│   │   └── preprocess.py     # Feature engineering & preprocessing pipeline
+│   │   ├── fraudTrain.csv    # Primary training data (place here)
+│   │   ├── fraudTest.csv     # Primary test data (place here)
+│   │   └── mauritius_finetune.csv  # Supplementary Mauritius data
 │   ├── database/
 │   │   ├── db.py             # SQLAlchemy setup
 │   │   └── models.py         # Predictions table schema
 │   ├── utils/
 │   │   ├── feature_engineering.py   # Haversine, age, hour, z-score
 │   │   └── text_explainer.py        # SHAP → plain English sentences
+│   ├── saved_models/         # Generated at runtime
+│   │   ├── lr_model.pkl
+│   │   ├── rf_model.pkl
+│   │   ├── xgb_model.pkl
+│   │   ├── pipeline.pkl
+│   │   └── metrics.json
 │   ├── requirements.txt
 │   ├── Dockerfile
 │   └── .env.example
 ├── frontend/                 # React + Vite + Tailwind
 │   ├── src/
-│   │   ├── pages/            # Dashboard, Predict, Batch, Retrain, History
-│   │   ├── components/       # Navbar, FraudGauge, FeatureBar, etc.
+│   │   ├── pages/            # Dashboard, Predict, BatchPredict, Retrain, History
+│   │   ├── components/       # Navbar, FraudGauge, FeatureBar, ModelSelector, etc.
 │   │   └── services/api.js   # Axios API layer
 │   ├── package.json
 │   ├── Dockerfile
 │   └── .env.example
-├── docker-compose.yml        # Local development
-├── railway.toml              # Railway deployment config
+├── docker-compose.yml
+├── railway.toml
+├── CNP_Fraud_Detection_Report.md
 └── README.md
 ```
 
@@ -40,24 +54,24 @@ CNP-Fraud-Detection/
 
 ## Dataset
 
-Download the Kaggle dataset [Credit Card Fraud](https://www.kaggle.com/datasets/kartik2112/fraud-detection) and place the files:
+Download the Kaggle dataset [Credit Card Fraud Detection](https://www.kaggle.com/datasets/kartik2112/fraud-detection) and place the files:
 
 ```
 backend/data/fraudTrain.csv
 backend/data/fraudTest.csv
 ```
 
-On first startup the backend checks for saved models. If none exist and the CSV files are present, training begins automatically (takes ~5–10 minutes depending on hardware).
+On first startup the backend checks for saved models. If none exist and the CSV files are present, training begins automatically (takes ~10–20 minutes depending on hardware).
+
+To reset and retrain from scratch, delete the contents of `backend/saved_models/` (keep the folder) and restart the server.
 
 ---
 
-## Running Locally with Docker Compose
+## Running Locally
 
-### Prerequisites
-- Docker ≥ 24
-- Docker Compose ≥ 2
+### Option A — Docker Compose
 
-### Steps
+**Prerequisites:** Docker ≥ 24, Docker Compose ≥ 2
 
 ```bash
 # 1. Clone the repository
@@ -76,11 +90,7 @@ docker-compose up --build
 #    API docs:  http://localhost:8000/docs
 ```
 
-The backend will begin training models on first boot. Monitor progress at `http://localhost:8000/api/status`.
-
-### Hot-reload (development)
-
-The `docker-compose.yml` mounts `./backend` into the container. For live-reload install dependencies locally and run:
+### Option B — Local Development (hot-reload)
 
 ```bash
 # Backend
@@ -94,6 +104,8 @@ npm install
 npm run dev
 ```
 
+Monitor training progress at `http://localhost:8000/api/status`.
+
 ---
 
 ## Deploying to Railway
@@ -105,45 +117,91 @@ npm run dev
 
 ### Step 2 — Configure the backend service
 
-1. In Railway, click **"New Service" → "GitHub Repo"**.
-2. Set the root directory to `backend/`.
-3. Railway will detect the `Dockerfile` automatically.
-4. Add environment variables in the service settings:
-   | Variable | Value |
-   |---|---|
-   | `MODEL_DIR` | `./saved_models` |
-   | `DATA_DIR` | `./data` |
-   | `DATABASE_URL` | `sqlite:///./fraud_detection.db` |
-5. Under **Deploy**, set the start command:
-   ```
-   uvicorn main:app --host 0.0.0.0 --port 8000
-   ```
-6. Set the exposed port to `8000`.
-7. Upload `fraudTrain.csv` and `fraudTest.csv` to the `/app/data/` directory via Railway's volume or build step.
+1. Click **"New Service" → "GitHub Repo"**, root directory: `backend/`.
+2. Railway detects the `Dockerfile` automatically.
+3. Add environment variables:
+
+| Variable | Value |
+|---|---|
+| `MODEL_DIR` | `./saved_models` |
+| `DATA_DIR` | `./data` |
+| `DATABASE_URL` | `sqlite:///./fraud_detection.db` |
+| `UPLOAD_SECRET` | *(optional — protects the model upload endpoint)* |
+
+4. Start command: `uvicorn main:app --host 0.0.0.0 --port 8000`
+5. Exposed port: `8000`
 
 ### Step 3 — Configure the frontend service
 
-1. Add another service pointing to `frontend/`.
-2. Add the build argument:
-   | Argument | Value |
-   |---|---|
-   | `VITE_API_URL` | `https://<your-backend-railway-url>` |
-3. Set the exposed port to `3001`.
+1. Add another service, root directory: `frontend/`.
+2. Build argument:
+
+| Argument | Value |
+|---|---|
+| `VITE_API_URL` | `https://<your-backend-railway-url>` |
+
+3. Exposed port: `3001`
 
 ### Step 4 — Deploy
 
-Click **Deploy** on both services. Railway will build the Docker images and start the containers. The backend will auto-train models on first boot if data files are present.
+Click **Deploy** on both services. The backend auto-trains on first boot if CSV files are present.
 
 ---
 
-## API Endpoint Documentation
+## Models
 
-Base URL: `http://localhost:8000` (or your Railway backend URL)
+| ID | Model | Role | Key Configuration |
+|---|---|---|---|
+| `lr` | Logistic Regression | Baseline / sensitivity net | `class_weight='balanced'`, `max_iter=1000` |
+| `rf` | Random Forest | High-precision detector | `n_estimators=200`, `max_depth=8`, `min_samples_leaf=10`, `class_weight='balanced'` |
+| `xgb` | XGBoost | Advanced detector | `n_estimators=100`, `scale_pos_weight` computed dynamically from training class ratio |
+
+All models use `random_state=42` for reproducibility. No synthetic oversampling (SMOTE) is used — class imbalance is handled natively by each model's weighting mechanism.
+
+---
+
+## Training Pipeline
+
+1. **Data split**: 60% train / 20% calibration holdout / 20% validation
+2. **Class balancing**: `class_weight='balanced'` (LR, RF) and `scale_pos_weight` (XGBoost)
+3. **Threshold selection**: Per-model optimal threshold is computed by maximising F1-score on the validation set precision-recall curve
+4. **Persistence**: Models saved as `.pkl` files; preprocessing pipeline saved separately as `pipeline.pkl`
+
+---
+
+## Ensemble Verdict Logic
+
+Predictions from all three models are combined using a conservative escalation strategy:
+
+**Per-model verdict zones:**
+
+| Condition | Verdict |
+|---|---|
+| `prob < threshold × 0.5` | ✅ APPROVED |
+| `threshold × 0.5 ≤ prob < threshold` | ⚠️ REVIEW REQUIRED |
+| `prob ≥ threshold` | 🚫 FRAUD BLOCKED |
+
+> LR uses its own calibrated threshold (~0.9865). RF and XGBoost thresholds are capped at 0.40 to prevent their high-precision optimal thresholds from suppressing fraud signals on novel inputs.
+
+**Combined verdict:**
+
+```
+Any model → FRAUD BLOCKED   ⟹  combined = FRAUD BLOCKED
+Any model → REVIEW REQUIRED ⟹  combined = REVIEW REQUIRED
+All models → APPROVED       ⟹  combined = APPROVED
+```
+
+False negatives (missed fraud) are treated as more costly than false positives, justifying the single-model escalation rule.
+
+---
+
+## API Reference
+
+Base URL: `http://localhost:8000` (or your Railway backend URL). Interactive docs at `/docs`.
 
 ### `GET /api/status`
-Returns current model loading status and training progress.
+Returns model loading status and training progress.
 
-**Response:**
 ```json
 {
   "models_loaded": true,
@@ -155,16 +213,7 @@ Returns current model loading status and training progress.
 ---
 
 ### `GET /api/metrics`
-Returns current model performance metrics.
-
-**Response:**
-```json
-{
-  "lr": { "accuracy": 0.94, "precision": 0.88, "recall": 0.91, "f1": 0.89, "auc_roc": 0.97 },
-  "rf": { ... },
-  "xgb": { ... }
-}
-```
+Returns current model performance metrics including accuracy, precision, recall, F1, AUC-ROC, PR-AUC, and confusion matrix per model.
 
 ---
 
@@ -180,9 +229,7 @@ Predict fraud for a single transaction.
   "category": "shopping_net",
   "hour_of_day": 2,
   "age": 35,
-  "state": "CA",
   "distance_from_home": 450.5,
-  "city_pop": 250000,
   "gender": "F"
 }
 ```
@@ -195,16 +242,13 @@ Predict fraud for a single transaction.
       "model_name": "xgb",
       "fraud_probability": 0.87,
       "verdict": "FRAUD BLOCKED",
-      "explanation": {
-        "risk_factors": [ { "feature": "distance_from_home", "sentence": "...", "shap": 0.45 } ],
-        "safe_factors": [ ... ]
-      },
-      "shap_features": [ { "feature": "amt", "shap": 0.32, "value": "149.99" }, ... ]
+      "explanation": { "risk_factors": [...], "safe_factors": [...] },
+      "shap_features": [{ "feature": "amt", "shap": 0.32, "value": "149.99" }]
     }
   ],
   "combined_verdict": "FRAUD BLOCKED",
-  "top_risk_factors": [ ... ],
-  "top_safe_factors": [ ... ]
+  "top_risk_factors": [...],
+  "top_safe_factors": [...]
 }
 ```
 
@@ -217,32 +261,35 @@ Run fraud prediction on a CSV file.
 
 **Body:** `multipart/form-data` with a `file` field containing the CSV.
 
-**Response:** A downloadable CSV with extra columns:
-- `fraud_probability_lr`
-- `fraud_probability_rf`
-- `fraud_probability_xgb`
+**Response:** Downloadable CSV with added columns:
+- `fraud_probability_lr`, `fraud_probability_rf`, `fraud_probability_xgb`
 - `combined_verdict`
 - `main_fraud_reason`
 
 ---
 
+### `POST /api/predict/batch/stream`
+Same as batch but streams progress as Server-Sent Events, used by the frontend for real-time progress bars.
+
+---
+
 ### `POST /api/retrain`
-Retrain all models with additional labelled data.
+Retrain all models with additional labelled data merged into the original training set.
 
-**Body:** `multipart/form-data` with a `file` field containing a CSV that includes `is_fraud`.
+**Query params:** `currency=USD` (default) or `currency=MUR` — if MUR, `amt` values are divided by 49 before merging.
 
-**Response:**
-```json
-{
-  "lr": {
-    "model_name": "lr",
-    "before": { "accuracy": 0.92, "precision": 0.85, ... },
-    "after":  { "accuracy": 0.94, "precision": 0.89, ... }
-  },
-  "rf": { ... },
-  "xgb": { ... }
-}
-```
+**Body:** `multipart/form-data` with a `file` field containing a labelled CSV (`is_fraud` column required).
+
+**Response:** Before/after metrics comparison per model.
+
+---
+
+### `POST /api/models/upload`
+Upload pre-trained model files directly (for Railway deployments where training on server is impractical).
+
+**Headers:** `X-Upload-Secret: <UPLOAD_SECRET>`
+
+**Body:** `multipart/form-data` — accepts `lr_model.pkl`, `rf_model.pkl`, `xgb_model.pkl`, `pipeline.pkl`, `metrics.json`.
 
 ---
 
@@ -250,14 +297,15 @@ Retrain all models with additional labelled data.
 Paginated list of all past predictions.
 
 **Query params:**
+
 | Param | Type | Description |
 |---|---|---|
 | `page` | int | Page number (default 1) |
 | `limit` | int | Rows per page (default 20, max 100) |
 | `verdict_filter` | string | `APPROVED`, `REVIEW REQUIRED`, or `FRAUD BLOCKED` |
 | `model_filter` | string | `lr`, `rf`, or `xgb` |
-| `date_from` | ISO date | Start date |
-| `date_to` | ISO date | End date |
+| `date_from` | ISO date | Start date filter |
+| `date_to` | ISO date | End date filter |
 
 ---
 
@@ -266,73 +314,65 @@ Aggregate counts and 30-day daily trend for the dashboard.
 
 ---
 
-## Using the Retrain Feature
+### `POST /api/feedback/{prediction_id}`
+Submit analyst label for a past prediction.
 
-1. Collect new labelled transactions in a CSV file.
-2. Ensure it contains all the required columns (listed on the Retrain page).
-3. The `is_fraud` column must be `0` or `1`.
+**Query params:** `label=0` (legitimate) or `label=1` (fraud)
+
+---
+
+## Retrain Feature
+
+1. Collect new labelled transactions in a CSV file with the required schema.
+2. The `is_fraud` column must be `0` or `1`.
+3. If amounts are in MUR (Mauritian Rupees), append `?currency=MUR` to the request.
 4. Navigate to **Retrain** in the app, upload the file, and click **Start Retraining**.
-5. The backend merges your new data with the original training set, re-applies SMOTE, retrains all three models, and returns a before/after metrics comparison.
+5. The backend merges your data with the original training set, retrains all three models, and returns a before/after metrics comparison.
+
+Analyst feedback submitted via the History page is also automatically merged into the next retrain.
 
 ---
 
-## Dataset Schema Requirements for Upload
+## CSV Schema for Upload
 
-Both batch prediction and retrain uploads expect these columns (same schema as the Kaggle dataset):
+Both batch prediction and retrain uploads require these columns:
 
-| Column | Type | Description |
+| Column | Type | Required for |
 |---|---|---|
-| `trans_date_trans_time` | datetime string | Transaction datetime |
-| `cc_num` | int/string | Credit card number |
-| `merchant` | string | Merchant name |
-| `category` | string | Merchant category |
-| `amt` | float | Transaction amount (USD) |
-| `gender` | string | `M` or `F` |
-| `city` | string | Cardholder city |
-| `state` | string | 2-letter US state code |
-| `zip` | int | Zip code |
-| `lat` | float | Cardholder latitude |
-| `long` | float | Cardholder longitude |
-| `city_pop` | int | City population |
-| `job` | string | Cardholder occupation |
-| `dob` | date string | Date of birth |
-| `trans_num` | string | Unique transaction ID |
-| `unix_time` | int | Unix timestamp |
-| `merch_lat` | float | Merchant latitude |
-| `merch_long` | float | Merchant longitude |
-| `is_fraud` | int | `1` = fraud, `0` = legitimate *(retrain only)* |
+| `trans_date_trans_time` | datetime string | Both |
+| `cc_num` | int/string | Both |
+| `merchant` | string | Both |
+| `category` | string | Both |
+| `amt` | float | Both |
+| `gender` | string (`M`/`F`) | Both |
+| `lat` | float | Both |
+| `long` | float | Both |
+| `merch_lat` | float | Both |
+| `merch_long` | float | Both |
+| `dob` | date string | Both |
+| `city` | string | Both |
+| `job` | string | Both |
+| `trans_num` | string | Both |
+| `unix_time` | int | Both |
+| `is_fraud` | int (`0`/`1`) | Retrain only |
 
 ---
 
-## Feature Engineering Details
+## Resetting the Database
 
-| Feature | Source | Description |
+The prediction history is stored in `backend/fraud_detection.db` (SQLite). To clear all history:
+
+1. Stop the backend server.
+2. Delete `backend/fraud_detection.db`.
+3. Restart — the database is recreated automatically on startup.
+
+---
+
+## Feature Engineering
+
+| Feature | Derived From | Description |
 |---|---|---|
 | `hour_of_day` | `trans_date_trans_time` | Hour extracted (0–23) |
 | `age` | `dob` | Years since date of birth |
-| `distance_from_home` | `lat/long` vs `merch_lat/merch_long` | Haversine distance in miles |
-| `amt_zscore` | `amt` + `category` | Z-score of amount relative to merchant category |
-
----
-
-## Models
-
-| ID | Model | Badge | Notes |
-|---|---|---|---|
-| `lr` | Logistic Regression | Baseline | Linear, fast inference, SHAP via LinearExplainer |
-| `rf` | Random Forest | Main | 100 trees, SHAP via TreeExplainer |
-| `xgb` | XGBoost | Advanced | Gradient boosting, SHAP via TreeExplainer |
-
-All models trained with `random_state=42` and SMOTE (`random_state=42`) for reproducibility.
-
----
-
-## Verdict Thresholds
-
-| Fraud Probability | Verdict |
-|---|---|
-| < 40% | ✅ APPROVED |
-| 40% – 69% | ⚠️ REVIEW REQUIRED |
-| ≥ 70% | 🚫 FRAUD BLOCKED |
-
-When multiple models are selected the **combined verdict** is determined by majority vote.
+| `distance_from_home` | cardholder vs merchant lat/long | Haversine great-circle distance in miles |
+| `amt_zscore` | `amt` + `category` | Standard deviations from merchant category mean |
