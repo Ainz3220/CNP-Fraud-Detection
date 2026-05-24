@@ -151,7 +151,7 @@ export default function BatchPredict({ modelsLoaded }) {
       </div>
 
       {stats && (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-4 gap-4">
           <div className="card text-center">
             <p className="text-xs text-gray-500 mb-1">Total Rows</p>
             <p className="text-2xl font-bold">{stats.total}</p>
@@ -159,6 +159,10 @@ export default function BatchPredict({ modelsLoaded }) {
           <div className="card text-center verdict-fraud">
             <p className="text-xs opacity-70 mb-1">Fraud Detected</p>
             <p className="text-2xl font-bold">{stats.fraud}</p>
+          </div>
+          <div className="card text-center verdict-review">
+            <p className="text-xs opacity-70 mb-1">Review Required</p>
+            <p className="text-2xl font-bold">{stats.review}</p>
           </div>
           <div className="card text-center verdict-safe">
             <p className="text-xs opacity-70 mb-1">Approved</p>

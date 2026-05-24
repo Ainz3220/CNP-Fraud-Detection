@@ -106,13 +106,19 @@ async def startup_event():
     thread.start()
 
 
+_TREE_MAX_THRESHOLD = 0.40  # cap for tree models only — LR uses its own calibrated threshold
+
+
 def _extract_thresholds(metrics: dict) -> dict:
-    """Pull optimal_threshold per model from metrics.json into a plain dict."""
+    """Pull optimal_threshold per model from metrics.json.
+    Tree models (RF, XGB) are capped at _TREE_MAX_THRESHOLD so high probabilities
+    still trigger verdicts; LR keeps its own calibrated threshold unchanged.
+    """
     result = {}
     for name in ("lr", "rf", "xgb"):
         t = metrics.get(name, {}).get("optimal_threshold")
         if t is not None:
-            result[name] = float(t)
+            result[name] = float(t) if name == "lr" else min(float(t), _TREE_MAX_THRESHOLD)
     return result
 
 
@@ -279,11 +285,23 @@ def submit_feedback(
     return {"id": prediction_id, "analyst_label": label}
 
 
+MUR_TO_USD = 49.0
+
+
 @app.post("/api/retrain")
-async def retrain_endpoint(file: UploadFile = File(...), db: Session = Depends(get_db)):
+async def retrain_endpoint(
+    file: UploadFile = File(...),
+    currency: str = Query(default="USD", description="Currency of the 'amt' column: USD or MUR"),
+    db: Session = Depends(get_db),
+):
     contents = await file.read()
     new_df = pd.read_csv(io.BytesIO(contents))
     new_df = validate_retrain_csv(new_df)
+
+    # Convert MUR amounts to USD so they're on the same scale as the training data
+    if currency.upper() == "MUR" and "amt" in new_df.columns:
+        new_df["amt"] = new_df["amt"] / MUR_TO_USD
+        logger.info(f"Converted {len(new_df)} rows from MUR to USD (÷{MUR_TO_USD}).")
 
     # Merge analyst feedback from DB as additional labeled rows
     feedback_rows = (

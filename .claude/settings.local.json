@@ -12,7 +12,10 @@
       "Bash(git add *)",
       "Bash(git commit -m ' *)",
       "Bash(git push *)",
-      "Bash(git -C /c/Codes/CNP-Fraud-Detection ls-files backend/saved_models/)"
+      "Bash(git -C /c/Codes/CNP-Fraud-Detection ls-files backend/saved_models/)",
+      "Bash(pip install *)",
+      "Bash(Remove-Item \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/lr_model.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/rf_model.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/xgb_model.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/pipeline.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/preprocess_cache.pkl\" -ErrorAction SilentlyContinue)",
+      "Bash(python3 -c ' *)"
     ]
   }
 }

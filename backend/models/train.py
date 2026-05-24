@@ -11,7 +11,6 @@ from typing import Dict, Optional, Tuple
 import joblib
 import numpy as np
 import pandas as pd
-from imblearn.over_sampling import SMOTE
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import (
@@ -113,15 +112,16 @@ def evaluate_model(model, X_test: np.ndarray, y_test: np.ndarray) -> dict:
     }
 
 
-def build_models() -> dict:
+def build_models(xgb_scale_pos_weight: float = 1.0) -> dict:
     return {
         "lr": LogisticRegression(max_iter=1000, random_state=42, class_weight="balanced"),
         "rf": RandomForestClassifier(
-            n_estimators=50, max_depth=20, min_samples_leaf=5,
-            random_state=42, n_jobs=-1,
+            n_estimators=200, max_depth=8, min_samples_leaf=10,
+            class_weight="balanced", random_state=42, n_jobs=-1,
         ),
         "xgb": XGBClassifier(
             n_estimators=100,
+            scale_pos_weight=xgb_scale_pos_weight,
             random_state=42,
             use_label_encoder=False,
             eval_metric="logloss",
@@ -160,27 +160,32 @@ def train(
         y_all = df["is_fraud"].values
         _save_cache(model_dir, data_hash, pipeline, X_all, y_all)
 
-    # Train / validation split (last 20% as val)
-    split = int(len(X_all) * 0.8)
-    X_train, X_val = X_all[:split], X_all[split:]
-    y_train, y_val = y_all[:split], y_all[split:]
+    # 60/20/20 split: train / calibration / validation
+    train_end = int(len(X_all) * 0.60)
+    cal_end = int(len(X_all) * 0.80)
+    X_train, X_cal, X_val = X_all[:train_end], X_all[train_end:cal_end], X_all[cal_end:]
+    y_train, y_cal, y_val = y_all[:train_end], y_all[train_end:cal_end], y_all[cal_end:]
 
-    _update_status("running", 25, "Applying SMOTE...")
-    smote = SMOTE(random_state=42)
-    X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
+    # XGBoost scale_pos_weight: ratio of legit to fraud in training set
+    neg_count = int((y_train == 0).sum())
+    pos_count = int((y_train == 1).sum())
+    xgb_spw = neg_count / pos_count if pos_count > 0 else 1.0
+    _update_status("running", 25, f"Class ratio — legit:{neg_count} fraud:{pos_count} (XGB spw={xgb_spw:.1f})")
 
-    models = build_models()
+    models = build_models(xgb_scale_pos_weight=xgb_spw)
     metrics = {}
-    model_steps = {"lr": (30, 50), "rf": (50, 70), "xgb": (70, 90)}
+    label_map = {"lr": "Logistic Regression", "rf": "Random Forest", "xgb": "XGBoost"}
+    model_steps = {"lr": (30, 50), "rf": (50, 70), "xgb": (70, 85)}
 
     for name, (start_pct, end_pct) in model_steps.items():
-        label_map = {"lr": "Logistic Regression", "rf": "Random Forest", "xgb": "XGBoost"}
         _update_status("running", start_pct, f"Training {label_map[name]}...")
-        model = models[name]
-        model.fit(X_train_res, y_train_res)
-        _update_status("running", end_pct, f"Evaluating {label_map[name]}...")
-        metrics[name] = evaluate_model(model, X_val, y_val)
-        joblib.dump(model, os.path.join(model_dir, f"{name}_model.pkl"))
+        models[name].fit(X_train, y_train)
+        logger.info(f"{label_map[name]} trained.")
+
+    for name in model_steps:
+        _update_status("running", 88, f"Evaluating {label_map[name]}...")
+        metrics[name] = evaluate_model(models[name], X_val, y_val)
+        joblib.dump(models[name], os.path.join(model_dir, f"{name}_model.pkl"))
         logger.info(f"{label_map[name]} metrics: {metrics[name]}")
 
     _update_status("running", 90, "Saving pipeline and metrics...")
@@ -192,7 +197,7 @@ def train(
         "n_samples": int(len(y_all)),
         "n_fraud": n_fraud,
         "n_legit": int(len(y_all)) - n_fraud,
-        "smote_samples_added": int(len(X_train_res) - len(X_train)),
+        "xgb_scale_pos_weight": round(xgb_spw, 2),
         "features": list(FEATURE_COLS),
     }
 

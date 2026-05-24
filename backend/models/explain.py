@@ -16,12 +16,27 @@ logger = logging.getLogger(__name__)
 _explainer_cache: Dict[str, shap.Explainer] = {}
 
 
+def _unwrap_model(model):
+    """Return the raw estimator from a CalibratedClassifierCV wrapper if present."""
+    try:
+        from sklearn.calibration import CalibratedClassifierCV
+        if isinstance(model, CalibratedClassifierCV):
+            if hasattr(model, "estimator"):
+                return model.estimator
+            if hasattr(model, "calibrated_classifiers_") and model.calibrated_classifiers_:
+                cc = model.calibrated_classifiers_[0]
+                return getattr(cc, "estimator", getattr(cc, "base_estimator", model))
+    except ImportError:
+        pass
+    return model
+
+
 def _build_explainer(model_name: str, model) -> shap.Explainer:
-    if isinstance(model, LogisticRegression):
-        # Background sample: single zero vector (mean-centred baseline)
+    unwrapped = _unwrap_model(model)
+    if isinstance(unwrapped, LogisticRegression):
         background = np.zeros((1, len(FEATURE_COLS)))
-        return shap.LinearExplainer(model, background)
-    return shap.TreeExplainer(model)
+        return shap.LinearExplainer(unwrapped, background)
+    return shap.TreeExplainer(unwrapped)
 
 
 def get_explainer(model_name: str, model) -> shap.Explainer:

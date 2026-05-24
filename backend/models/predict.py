@@ -14,13 +14,15 @@ from utils.text_explainer import generate_explanation
 logger = logging.getLogger(__name__)
 
 DEFAULT_FRAUD_THRESHOLD = 0.40
-REVIEW_UPPER = 0.70
+REVIEW_LOWER = 0.30  # lower bound of the review band — anything below this is APPROVED
 
 
 def probability_to_verdict(prob: float, threshold: float = DEFAULT_FRAUD_THRESHOLD) -> str:
-    if prob < threshold:
+    # review zone: [review_lower, threshold); fraud zone: [threshold, 1]
+    review_lower = min(REVIEW_LOWER, threshold * 0.5)
+    if prob < review_lower:
         return "APPROVED"
-    if prob < REVIEW_UPPER:
+    if prob < threshold:
         return "REVIEW REQUIRED"
     return "FRAUD BLOCKED"
 
@@ -28,9 +30,10 @@ def probability_to_verdict(prob: float, threshold: float = DEFAULT_FRAUD_THRESHO
 def majority_vote(verdicts: List[str]) -> str:
     fraud_count = sum(1 for v in verdicts if v == "FRAUD BLOCKED")
     review_count = sum(1 for v in verdicts if v == "REVIEW REQUIRED")
-    if fraud_count > len(verdicts) / 2:
+    # Any single FRAUD BLOCKED blocks — false negatives are costlier than false positives
+    if fraud_count >= 1:
         return "FRAUD BLOCKED"
-    if (fraud_count + review_count) > len(verdicts) / 2:
+    if review_count > 0:
         return "REVIEW REQUIRED"
     return "APPROVED"
 
@@ -169,13 +172,18 @@ def predict_batch(
         probs_by_model[name] = probs
 
     if probs_by_model:
-        # Per-model threshold for combined verdict
-        all_thresholds = [
-            (thresholds or {}).get(n, DEFAULT_FRAUD_THRESHOLD) for n in selected_models if n in models
+        # Compute per-model verdicts then majority-vote per row — same logic as single prediction
+        active = [n for n in selected_models if n in models]
+        model_verdicts: dict[str, list[str]] = {}
+        for name in active:
+            thresh = (thresholds or {}).get(name, DEFAULT_FRAUD_THRESHOLD)
+            model_verdicts[name] = [probability_to_verdict(float(p), thresh) for p in probs_by_model[name]]
+
+        n_rows = len(result_df)
+        result_df["combined_verdict"] = [
+            majority_vote([model_verdicts[name][i] for name in active])
+            for i in range(n_rows)
         ]
-        avg_threshold = float(np.mean(all_thresholds)) if all_thresholds else DEFAULT_FRAUD_THRESHOLD
-        avg_probs = np.mean(list(probs_by_model.values()), axis=0)
-        result_df["combined_verdict"] = [probability_to_verdict(p, avg_threshold) for p in avg_probs]
         first_model_name = selected_models[0]
         if first_model_name in models:
             shap_vals = get_shap_values(first_model_name, models[first_model_name], X)

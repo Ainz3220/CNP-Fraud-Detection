@@ -2,3 +2,6 @@ provide me with some example i will screenshot the result so that we can align a
 
 some example for presentation
 fraudster usally make frand with small amount and way from home
+
+
+cd backend && python -m uvicorn main:app --reload --port 8000
