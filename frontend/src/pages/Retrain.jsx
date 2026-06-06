@@ -24,7 +24,7 @@ const MetricDiff = ({ label, before, after }) => {
   const a = typeof after === 'number' ? Math.round(after * 100) : null
   const diff = b !== null && a !== null ? a - b : null
   return (
-    <tr className="border-b border-gray-100 dark:border-gray-800">
+    <tr className="border-b border-gray-100">
       <td className="py-1.5 pr-4 capitalize text-sm">{label === 'auc_roc' ? 'AUC-ROC' : label}</td>
       <td className="py-1.5 pr-4 text-sm text-right">{b !== null ? `${b}%` : '—'}</td>
       <td className="py-1.5 pr-4 text-sm text-right">{a !== null ? `${a}%` : '—'}</td>
@@ -88,16 +88,16 @@ export default function Retrain() {
       <h1 className="text-2xl font-bold">Retrain Models</h1>
 
       {/* Instructions */}
-      <div className="card bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
-        <h2 className="font-semibold mb-2 text-blue-800 dark:text-blue-300">Required CSV Format</h2>
-        <p className="text-sm text-blue-700 dark:text-blue-400 mb-3">
-          Upload a CSV file containing new labelled transaction data. It must include the <code className="bg-blue-100 dark:bg-blue-800 px-1 rounded">is_fraud</code> column and these fields:
+      <div className="card bg-blue-50 border-blue-200">
+        <h2 className="font-semibold mb-2 text-blue-800">Required CSV Format</h2>
+        <p className="text-sm text-blue-700 mb-3">
+          Upload a CSV file containing new labelled transaction data. It must include the <code className="bg-blue-100 px-1 rounded">is_fraud</code> column and these fields:
         </p>
         <div className="flex flex-wrap gap-1">
           {SCHEMA_COLS.map(c => (
             <code
               key={c}
-              className={`text-xs px-2 py-0.5 rounded ${c === 'is_fraud' ? 'bg-blue-600 text-white' : 'bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-300'}`}
+              className={`text-xs px-2 py-0.5 rounded ${c === 'is_fraud' ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-700'}`}
             >
               {c}
             </code>
@@ -110,8 +110,8 @@ export default function Retrain() {
           {...getRootProps()}
           className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
             isDragActive
-              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-              : 'border-gray-300 dark:border-gray-600 hover:border-indigo-400'
+              ? 'border-indigo-500 bg-indigo-50'
+              : 'border-gray-300 hover:border-indigo-400'
           }`}
         >
           <input {...getInputProps()} />
@@ -139,7 +139,7 @@ export default function Retrain() {
                 ) : (
                   <div className="w-4 h-4 rounded-full border-2 border-gray-300 flex-shrink-0" />
                 )}
-                <span className={i <= stepIdx ? 'text-gray-800 dark:text-gray-200' : 'text-gray-400'}>
+                <span className={i <= stepIdx ? 'text-gray-800' : 'text-gray-400'}>
                   {step}
                 </span>
               </div>
@@ -165,7 +165,7 @@ export default function Retrain() {
               <h3 className="font-medium mb-3">{MODEL_LABELS[key] || key}</h3>
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-700 text-xs text-gray-500">
+                  <tr className="border-b border-gray-200 text-xs text-gray-500">
                     <th className="text-left py-2 pr-4">Metric</th>
                     <th className="text-right py-2 pr-4">Before</th>
                     <th className="text-right py-2 pr-4">After</th>

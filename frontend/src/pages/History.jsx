@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { getHistory, submitFeedback } from '../services/api'
+import { getHistory, submitFeedback, MUR_TO_USD } from '../services/api'
 import ExplanationCard from '../components/ExplanationCard'
 import toast from 'react-hot-toast'
 
@@ -21,7 +21,7 @@ function Pagination({ page, pages, onChange }) {
       >
         ‹
       </button>
-      <span className="text-sm text-gray-600 dark:text-gray-400">
+      <span className="text-sm text-gray-600">
         Page {page} of {pages}
       </span>
       <button
@@ -86,36 +86,10 @@ export default function History() {
     return row.analyst_label
   }
 
-  const exportCsv = async () => {
-    const params = { ...filters, limit: 10000, page: 1 }
-    const result = await getHistory(params)
-    const headers = ['id', 'timestamp', 'amount_mur', 'category', 'model_used', 'fraud_probability', 'verdict', 'main_reason']
-    const rows = result.items.map(r =>
-      headers.map(h => {
-        if (h === 'amount_mur') return JSON.stringify((parseFloat(r.amount || 0) * 49).toFixed(2))
-        return JSON.stringify(r[h] ?? '')
-      }).join(',')
-    )
-    const csv = [headers.join(','), ...rows].join('\n')
-    const blob = new Blob([csv], { type: 'text/csv' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = 'prediction_history.csv'
-    a.click()
-    URL.revokeObjectURL(url)
-  }
-
   return (
     <div className="space-y-5">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Prediction History</h1>
-        <button onClick={exportCsv} className="btn-secondary text-sm flex items-center gap-2">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-          </svg>
-          Export CSV
-        </button>
       </div>
 
       {/* Filters */}
@@ -154,8 +128,8 @@ export default function History() {
       <div className="card p-0 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 dark:bg-gray-800/50">
-              <tr className="border-b border-gray-200 dark:border-gray-700">
+            <thead className="bg-gray-50">
+              <tr className="border-b border-gray-200">
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Timestamp</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-500">Amount (MUR)</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Category</th>
@@ -187,13 +161,13 @@ export default function History() {
                   return (
                     <React.Fragment key={row.id}>
                       <tr
-                        className="border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40 cursor-pointer"
+                        className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                         onClick={() => setExpanded(expanded === row.id ? null : row.id)}
                       >
                         <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
                           {row.timestamp ? new Date(row.timestamp).toLocaleString() : '—'}
                         </td>
-                        <td className="px-4 py-3 text-right font-mono">MUR {(parseFloat(row.amount || 0) * 49).toFixed(2)}</td>
+                        <td className="px-4 py-3 text-right font-mono">MUR {(parseFloat(row.amount || 0) * MUR_TO_USD).toFixed(2)}</td>
                         <td className="px-4 py-3 capitalize">{row.category || '—'}</td>
                         <td className="px-4 py-3 uppercase text-xs">{MODEL_LABELS[row.model_used] || row.model_used}</td>
                         <td className="px-4 py-3 text-right font-mono">
@@ -216,18 +190,18 @@ export default function History() {
                         <td className="px-4 py-3 text-xs text-gray-500">{row.main_reason || '—'}</td>
                       </tr>
                       {expanded === row.id && (
-                        <tr className="bg-gray-50 dark:bg-gray-800/30">
+                        <tr className="bg-gray-50">
                           <td colSpan={8} className="px-6 py-4 space-y-4">
                             <ExplanationCard explanation={row.explanation} />
-                            <div className="flex items-center gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+                            <div className="flex items-center gap-3 pt-2 border-t border-gray-200">
                               <span className="text-xs font-medium text-gray-500">Analyst Feedback:</span>
                               <button
                                 disabled={fb?.submitting}
                                 onClick={e => { e.stopPropagation(); handleFeedback(row.id, 1) }}
                                 className={`text-xs px-3 py-1 rounded font-medium border transition-colors ${
                                   analystLabel === 1
-                                    ? 'bg-red-100 border-red-400 text-red-700 dark:bg-red-900/30 dark:text-red-400'
-                                    : 'border-gray-300 hover:bg-red-50 hover:border-red-400 hover:text-red-700 dark:border-gray-600 dark:hover:bg-red-900/20'
+                                    ? 'bg-red-100 border-red-400 text-red-700'
+                                    : 'border-gray-300 hover:bg-red-50 hover:border-red-400 hover:text-red-700'
                                 } disabled:opacity-50`}
                               >
                                 Mark as Fraud
@@ -237,8 +211,8 @@ export default function History() {
                                 onClick={e => { e.stopPropagation(); handleFeedback(row.id, 0) }}
                                 className={`text-xs px-3 py-1 rounded font-medium border transition-colors ${
                                   analystLabel === 0
-                                    ? 'bg-green-100 border-green-400 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                                    : 'border-gray-300 hover:bg-green-50 hover:border-green-400 hover:text-green-700 dark:border-gray-600 dark:hover:bg-green-900/20'
+                                    ? 'bg-green-100 border-green-400 text-green-700'
+                                    : 'border-gray-300 hover:bg-green-50 hover:border-green-400 hover:text-green-700'
                                 } disabled:opacity-50`}
                               >
                                 Mark as Legitimate
@@ -256,7 +230,7 @@ export default function History() {
           </table>
         </div>
         {data.pages > 1 && (
-          <div className="px-4 py-3 border-t border-gray-100 dark:border-gray-800">
+          <div className="px-4 py-3 border-t border-gray-100">
             <Pagination page={data.page} pages={data.pages} onChange={setPage} />
           </div>
         )}

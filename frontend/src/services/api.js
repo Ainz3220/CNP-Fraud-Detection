@@ -1,6 +1,8 @@
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
+export const MUR_TO_USD = 49
+
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || '',
   timeout: 120000,
@@ -103,7 +105,7 @@ export const predictBatchStream = (file, models = 'lr,rf,xgb', onProgress) => {
                   resolve(new Blob([event.csv], { type: 'text/csv' }))
                   return
                 }
-              } catch (_) { /* ignore parse errors */ }
+              } catch (e) { console.warn('SSE parse error:', e, line) }
             }
             pump()
           }).catch(reject)

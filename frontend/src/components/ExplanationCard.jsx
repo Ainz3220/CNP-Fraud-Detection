@@ -24,7 +24,7 @@ export default function ExplanationCard({ explanation }) {
           <p className="text-xs font-semibold text-red-600 uppercase tracking-wide mb-2">Risk Factors</p>
           <ul className="space-y-1.5">
             {risk_factors.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
                 <RiskIcon />
                 <span>{item.sentence}</span>
               </li>
@@ -37,7 +37,7 @@ export default function ExplanationCard({ explanation }) {
           <p className="text-xs font-semibold text-green-600 uppercase tracking-wide mb-2">Legitimacy Factors</p>
           <ul className="space-y-1.5">
             {safe_factors.map((item, i) => (
-              <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+              <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
                 <SafeIcon />
                 <span>{item.sentence}</span>
               </li>

@@ -25,15 +25,15 @@ export default function ModelSelector({ selected, onChange }) {
             onClick={() => toggle(key)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
               active
-                ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300'
-                : 'border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-300'
+                ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
             }`}
           >
             <span>{info.label}</span>
             <span className={`text-xs px-1.5 py-0.5 rounded font-semibold ${
               active
                 ? 'bg-indigo-600 text-white'
-                : 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400'
+                : 'bg-gray-200 text-gray-500'
             }`}>
               {info.badge}
             </span>

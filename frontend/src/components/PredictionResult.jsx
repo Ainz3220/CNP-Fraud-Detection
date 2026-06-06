@@ -19,7 +19,7 @@ export default function PredictionResult({ result }) {
   const [activeTab, setActiveTab] = useState(0)
 
   if (!result) return null
-  const { model_results = [], combined_verdict, top_risk_factors, top_safe_factors } = result
+  const { model_results = [], combined_verdict } = result
 
   return (
     <div className="space-y-4 mt-6">
@@ -46,7 +46,7 @@ export default function PredictionResult({ result }) {
               className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                 activeTab === i
                   ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               {MODEL_BADGE[r.model_name]?.label || r.model_name}
@@ -69,7 +69,7 @@ export default function PredictionResult({ result }) {
               </span>
               <div className="text-center">
                 <p className="text-xs text-gray-500">{MODEL_BADGE[r.model_name]?.label}</p>
-                <span className="text-xs bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded font-medium">
+                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded font-medium">
                   {MODEL_BADGE[r.model_name]?.badge}
                 </span>
               </div>
@@ -100,7 +100,7 @@ export default function PredictionResult({ result }) {
           <h3 className="text-sm font-semibold mb-3">Model Comparison</h3>
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-gray-200 dark:border-gray-700">
+              <tr className="border-b border-gray-200">
                 <th className="text-left py-2 font-medium text-gray-500">Model</th>
                 <th className="text-right py-2 font-medium text-gray-500">Fraud Prob.</th>
                 <th className="text-right py-2 font-medium text-gray-500">Verdict</th>
@@ -108,7 +108,7 @@ export default function PredictionResult({ result }) {
             </thead>
             <tbody>
               {model_results.map(r => (
-                <tr key={r.model_name} className="border-b border-gray-100 dark:border-gray-800">
+                <tr key={r.model_name} className="border-b border-gray-100">
                   <td className="py-2">{MODEL_BADGE[r.model_name]?.label}</td>
                   <td className="text-right py-2 font-mono">{(r.fraud_probability * 100).toFixed(1)}%</td>
                   <td className="text-right py-2">

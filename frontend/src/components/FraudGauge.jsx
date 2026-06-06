@@ -1,9 +1,5 @@
 import React from 'react'
 
-/**
- * SVG arc gauge showing fraud probability 0–100%.
- * Green < 40%, amber 40–69%, red >= 70%.
- */
 export default function FraudGauge({ probability = 0, size = 140 }) {
   const pct = Math.max(0, Math.min(1, probability))
   const radius = 46
@@ -45,7 +41,6 @@ export default function FraudGauge({ probability = 0, size = 140 }) {
         strokeWidth="10"
         fill="none"
         strokeLinecap="round"
-        className="dark:stroke-gray-700"
       />
       {/* Fill */}
       {fillPath && (

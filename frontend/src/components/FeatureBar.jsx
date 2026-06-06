@@ -20,11 +20,11 @@ export default function FeatureBar({ features = [] }) {
         const isRisk = f.shap > 0
         return (
           <div key={f.feature} className="flex items-center gap-2 text-sm">
-            <span className="w-36 text-right text-gray-600 dark:text-gray-400 truncate flex-shrink-0">
+            <span className="w-36 text-right text-gray-600 truncate flex-shrink-0">
               {FEATURE_LABELS[f.feature] || f.feature}
             </span>
             <div className="flex-1 flex items-center gap-1">
-              <div className="flex-1 bg-gray-100 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+              <div className="flex-1 bg-gray-100 rounded-full h-3 overflow-hidden">
                 <div
                   className={`h-full rounded-full transition-all ${isRisk ? 'bg-red-500' : 'bg-green-500'}`}
                   style={{ width: `${pct}%` }}

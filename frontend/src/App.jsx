@@ -9,15 +9,7 @@ import History from './pages/History'
 import { getStatus } from './services/api'
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(
-    () => localStorage.getItem('darkMode') === 'true'
-  )
   const [modelsLoaded, setModelsLoaded] = useState(false)
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode)
-    localStorage.setItem('darkMode', darkMode)
-  }, [darkMode])
 
   useEffect(() => {
     const poll = async () => {
@@ -36,11 +28,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar
-        darkMode={darkMode}
-        toggleDark={() => setDarkMode(d => !d)}
-        modelsLoaded={modelsLoaded}
-      />
+      <Navbar modelsLoaded={modelsLoaded} />
       <main className="flex-1 container mx-auto px-4 py-6 max-w-7xl">
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />

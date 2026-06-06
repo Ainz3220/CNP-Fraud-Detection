@@ -3,7 +3,7 @@ import {
   LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid,
   Tooltip, Legend, ResponsiveContainer, ComposedChart,
 } from 'recharts'
-import { getMetrics, getHistoryStats, getHistory } from '../services/api'
+import { getMetrics, getHistoryStats, getHistory, MUR_TO_USD } from '../services/api'
 import MetricsTable from '../components/MetricsTable'
 
 const MODEL_COLORS = { lr: '#6366f1', rf: '#10b981', xgb: '#f59e0b' }
@@ -14,22 +14,22 @@ function ConfusionMatrix({ cm, label }) {
   const { tn = 0, fp = 0, fn = 0, tp = 0 } = cm
   return (
     <div className="flex flex-col items-center gap-1">
-      <p className="text-xs font-semibold text-gray-600 dark:text-gray-300 mb-1">{label}</p>
-      <div className="grid grid-cols-2 gap-px bg-gray-200 dark:bg-gray-700 text-xs text-center w-40 rounded overflow-hidden">
-        <div className="bg-green-50 dark:bg-green-900/30 p-2">
-          <div className="font-bold text-green-700 dark:text-green-400">{tp}</div>
+      <p className="text-xs font-semibold text-gray-600 mb-1">{label}</p>
+      <div className="grid grid-cols-2 gap-px bg-gray-200 text-xs text-center w-40 rounded overflow-hidden">
+        <div className="bg-green-50 p-2">
+          <div className="font-bold text-green-700">{tp}</div>
           <div className="text-gray-500">TP</div>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 p-2">
-          <div className="font-bold text-red-600 dark:text-red-400">{fp}</div>
+        <div className="bg-red-50 p-2">
+          <div className="font-bold text-red-600">{fp}</div>
           <div className="text-gray-500">FP</div>
         </div>
-        <div className="bg-red-50 dark:bg-red-900/20 p-2">
-          <div className="font-bold text-red-600 dark:text-red-400">{fn}</div>
+        <div className="bg-red-50 p-2">
+          <div className="font-bold text-red-600">{fn}</div>
           <div className="text-gray-500">FN</div>
         </div>
-        <div className="bg-green-50 dark:bg-green-900/30 p-2">
-          <div className="font-bold text-green-700 dark:text-green-400">{tn}</div>
+        <div className="bg-green-50 p-2">
+          <div className="font-bold text-green-700">{tn}</div>
           <div className="text-gray-500">TN</div>
         </div>
       </div>
@@ -40,7 +40,7 @@ function ConfusionMatrix({ cm, label }) {
 
 const StatCard = ({ label, value, sub, color }) => (
   <div className="card">
-    <p className="text-sm text-gray-500 dark:text-gray-400">{label}</p>
+    <p className="text-sm text-gray-500">{label}</p>
     <p className={`text-3xl font-bold mt-1 ${color || ''}`}>{value}</p>
     {sub && <p className="text-xs text-gray-400 mt-1">{sub}</p>}
   </div>
@@ -61,14 +61,14 @@ export default function Dashboard({ modelsLoaded }) {
   useEffect(() => {
     const load = async () => {
       try {
-        const [m, s, h] = await Promise.all([
+        const [metrics, stats, history] = await Promise.all([
           getMetrics().catch(() => ({})),
           getHistoryStats().catch(() => null),
           getHistory({ limit: 5 }).catch(() => ({ items: [] })),
         ])
-        setMetrics(m)
-        setStats(s)
-        setRecent(h.items || [])
+        setMetrics(metrics)
+        setStats(stats)
+        setRecent(history.items || [])
       } finally {
         setLoading(false)
       }
@@ -76,12 +76,14 @@ export default function Dashboard({ modelsLoaded }) {
     load()
   }, [])
 
-  const barData = Object.entries(metrics).map(([key, vals]) => ({
-    model: key === 'lr' ? 'LR' : key === 'rf' ? 'RF' : 'XGB',
-    Accuracy: vals.accuracy ? Math.round(vals.accuracy * 100) : 0,
-    F1: vals.f1 ? Math.round(vals.f1 * 100) : 0,
-    'AUC-ROC': vals.auc_roc ? Math.round(vals.auc_roc * 100) : 0,
-  }))
+  const barData = Object.entries(metrics)
+    .filter(([key]) => ['lr', 'rf', 'xgb'].includes(key))
+    .map(([key, vals]) => ({
+      model: key === 'lr' ? 'LR' : key === 'rf' ? 'RF' : 'XGB',
+      Accuracy: vals.accuracy ? Math.round(vals.accuracy * 100) : 0,
+      F1: vals.f1 ? Math.round(vals.f1 * 100) : 0,
+      'AUC-ROC': vals.auc_roc ? Math.round(vals.auc_roc * 100) : 0,
+    }))
 
   if (loading) {
     return (
@@ -96,10 +98,10 @@ export default function Dashboard({ modelsLoaded }) {
       <h1 className="text-2xl font-bold">Dashboard</h1>
 
       {!modelsLoaded && (
-        <div className="card bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800">
+        <div className="card bg-amber-50 border-amber-200">
           <div className="flex items-center gap-3">
             <div className="animate-spin w-5 h-5 border-2 border-amber-500 border-t-transparent rounded-full" />
-            <p className="text-amber-700 dark:text-amber-400 text-sm font-medium">
+            <p className="text-amber-700 text-sm font-medium">
               Models are loading or training for the first time. This may take a few minutes.
             </p>
           </div>
@@ -248,15 +250,11 @@ export default function Dashboard({ modelsLoaded }) {
                 <span className="text-green-600">{metrics._meta.n_legit?.toLocaleString() ?? '—'} legit</span>
               </p>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 mb-1">SMOTE Synthetic Samples</p>
-              <p className="font-medium">{metrics._meta.smote_samples_added?.toLocaleString() ?? '—'} added</p>
-            </div>
             <div className="sm:col-span-2">
               <p className="text-xs text-gray-500 mb-1">Features ({metrics._meta.features?.length ?? 0})</p>
               <div className="flex flex-wrap gap-1">
                 {(metrics._meta.features ?? []).map(f => (
-                  <span key={f} className="text-xs bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 px-2 py-0.5 rounded">
+                  <span key={f} className="text-xs bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded">
                     {f}
                   </span>
                 ))}
@@ -266,7 +264,7 @@ export default function Dashboard({ modelsLoaded }) {
               <p className="text-xs text-gray-500 mb-1">Optimal Thresholds (F1-maximizing)</p>
               <div className="flex flex-wrap gap-3">
                 {['lr', 'rf', 'xgb'].map(key => metrics[key]?.optimal_threshold != null && (
-                  <span key={key} className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">
+                  <span key={key} className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
                     {MODEL_NAMES[key]}: {metrics[key].optimal_threshold}
                   </span>
                 ))}
@@ -285,7 +283,7 @@ export default function Dashboard({ modelsLoaded }) {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-gray-200 dark:border-gray-700 text-left">
+                <tr className="border-b border-gray-200 text-left">
                   <th className="py-2 pr-4 font-medium text-gray-500">Time</th>
                   <th className="py-2 pr-4 font-medium text-gray-500">Amount (MUR)</th>
                   <th className="py-2 pr-4 font-medium text-gray-500">Category</th>
@@ -295,11 +293,11 @@ export default function Dashboard({ modelsLoaded }) {
               </thead>
               <tbody>
                 {recent.map(r => (
-                  <tr key={r.id} className="border-b border-gray-100 dark:border-gray-800">
+                  <tr key={r.id} className="border-b border-gray-100">
                     <td className="py-2 pr-4 text-gray-500 text-xs">
                       {r.timestamp ? new Date(r.timestamp).toLocaleString() : '—'}
                     </td>
-                    <td className="py-2 pr-4">MUR {(parseFloat(r.amount || 0) * 49).toFixed(2)}</td>
+                    <td className="py-2 pr-4">MUR {(parseFloat(r.amount || 0) * MUR_TO_USD).toFixed(2)}</td>
                     <td className="py-2 pr-4 capitalize">{r.category || '—'}</td>
                     <td className="py-2 pr-4 uppercase text-xs">{r.model_used}</td>
                     <td className="py-2">

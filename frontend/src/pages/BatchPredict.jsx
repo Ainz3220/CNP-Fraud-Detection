@@ -102,8 +102,8 @@ export default function BatchPredict({ modelsLoaded }) {
           {...getRootProps()}
           className={`border-2 border-dashed rounded-xl p-10 text-center cursor-pointer transition-colors ${
             isDragActive
-              ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-              : 'border-gray-300 dark:border-gray-600 hover:border-indigo-400'
+              ? 'border-indigo-500 bg-indigo-50'
+              : 'border-gray-300 hover:border-indigo-400'
           }`}
         >
           <input {...getInputProps()} />
@@ -132,7 +132,7 @@ export default function BatchPredict({ modelsLoaded }) {
               <span>{progressText ? `Processing… ${progressText}` : 'Starting…'}</span>
               <span>{progress}%</span>
             </div>
-            <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3 overflow-hidden">
+            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
               <div
                 className="h-full bg-indigo-600 rounded-full transition-all duration-300"
                 style={{ width: `${progress}%` }}
@@ -184,8 +184,8 @@ export default function BatchPredict({ modelsLoaded }) {
           </div>
           <div className="overflow-x-auto max-h-96 overflow-y-auto">
             <table className="w-full text-xs">
-              <thead className="sticky top-0 bg-white dark:bg-gray-800">
-                <tr className="border-b border-gray-200 dark:border-gray-700">
+              <thead className="sticky top-0 bg-white">
+                <tr className="border-b border-gray-200">
                   {Object.keys(rows[0]).slice(0, 10).map(h => (
                     <th key={h} className="text-left py-2 pr-3 font-medium text-gray-500 whitespace-nowrap">
                       {h}
@@ -195,7 +195,7 @@ export default function BatchPredict({ modelsLoaded }) {
               </thead>
               <tbody>
                 {rows.map((row, i) => (
-                  <tr key={i} className="border-b border-gray-100 dark:border-gray-800">
+                  <tr key={i} className="border-b border-gray-100">
                     {Object.entries(row).slice(0, 10).map(([k, v]) => (
                       <td key={k} className="py-1.5 pr-3 whitespace-nowrap">
                         {k === 'combined_verdict' ? (
