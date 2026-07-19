@@ -13,6 +13,34 @@ CATEGORICAL_COLS = ["category", "gender"]
 NUMERIC_COLS = ["amt", "hour_of_day", "age", "distance_from_home", "amt_zscore"]
 FEATURE_COLS = NUMERIC_COLS + CATEGORICAL_COLS
 
+# Categories in the Kaggle dataset are suffixed to indicate transaction channel.
+# "_net" = online/e-commerce (Card-Not-Present eligible)
+# "_pos" = point-of-sale (requires physical card presence)
+# Categories with no suffix (e.g. "travel", "entertainment", "home",
+# "health_fitness", "kids_pets", "personal_care", "food_dining",
+# "gas_transport") are channel-ambiguous and are excluded, erring on the
+# side of excluding possibly-online transactions rather than including
+# confirmed card-present ones.
+CNP_CATEGORIES = [
+    "grocery_net",
+    "misc_net",
+    "shopping_net",
+]
+
+
+def filter_cnp_transactions(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Restrict the dataset to transactions in merchant categories that are
+    unambiguously Card-Not-Present (CNP), i.e. online ("_net") categories.
+    Card-present ("_pos") and channel-ambiguous categories are dropped.
+    """
+    before = len(df)
+    df = df[df["category"].isin(CNP_CATEGORIES)].reset_index(drop=True)
+    after = len(df)
+    print(f"CNP category filter: {before:,} -> {after:,} transactions "
+          f"({after / before:.1%} retained)")
+    return df
+
 
 def load_raw_data(train_path: str, test_path: str = None) -> pd.DataFrame:
     df_train = pd.read_csv(train_path)

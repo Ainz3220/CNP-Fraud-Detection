@@ -20,13 +20,21 @@ from sklearn.metrics import (
 )
 from xgboost import XGBClassifier
 
-from datautils.preprocess import PreprocessingPipeline, load_raw_data, FEATURE_COLS  # noqa: F401 (used in _meta)
+from datautils.preprocess import (
+    PreprocessingPipeline, load_raw_data, filter_cnp_transactions, FEATURE_COLS,
+)  # noqa: F401 (FEATURE_COLS used in _meta)
 
 logger = logging.getLogger(__name__)
 
 MODEL_NAMES = ["lr", "rf", "xgb"]
 
 _TRAINING_STATUS = {"status": "idle", "progress": 0, "message": ""}
+
+# Bumped from "preprocess_cache.pkl" now that CNP category filtering has been
+# added to the loading step. A new cache filename forces a fresh preprocessing
+# run instead of silently reusing a stale, unfiltered cache from before this
+# change.
+_CACHE_FILE = "preprocess_cache_cnp_v2.pkl"
 
 
 def get_training_status() -> dict:
@@ -36,8 +44,6 @@ def get_training_status() -> dict:
 # ---------------------------------------------------------------------------
 # Preprocessing cache helpers
 # ---------------------------------------------------------------------------
-
-_CACHE_FILE = "preprocess_cache.pkl"
 
 
 def _data_hash(train_path: str, test_path: Optional[str], extra_df: Optional[pd.DataFrame]) -> str:
@@ -139,6 +145,10 @@ def train(
     """
     Full training pipeline. Returns metrics dict keyed by model name.
     If extra_df is provided it is merged with the CSV data before training.
+
+    The loaded dataset is restricted to unambiguously Card-Not-Present (CNP)
+    merchant categories (see datautils.preprocess.filter_cnp_transactions)
+    before any feature engineering, model fitting, or evaluation takes place.
     """
     Path(model_dir).mkdir(parents=True, exist_ok=True)
 
@@ -150,6 +160,8 @@ def train(
     else:
         _update_status("running", 5, "Loading dataset...")
         df = load_raw_data(train_path, test_path)
+        _update_status("running", 8, "Filtering to CNP-eligible categories...")
+        df = filter_cnp_transactions(df)
         if extra_df is not None:
             df = pd.concat([df, extra_df], ignore_index=True)
         if "is_fraud" not in df.columns:

@@ -5,14 +5,12 @@ import { predictTransaction } from '../services/api'
 import toast from 'react-hot-toast'
 
 const CATEGORIES = [
-  'grocery_pos', 'shopping_net', 'gas_transport', 'entertainment',
-  'food_dining', 'health_fitness', 'home', 'kids_pets', 'misc_net',
-  'misc_pos', 'personal_care', 'shopping_pos', 'travel',
+  'grocery_net', 'misc_net', 'shopping_net',
 ]
 
 const DEFAULT_FORM = {
   amt: '',
-  category: 'grocery_pos',
+  category: 'grocery_net',
   hour_of_day: 12,
   age: '',
   distance_from_home: '',

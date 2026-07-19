@@ -27,7 +27,7 @@ export default function PredictionResult({ result }) {
       {model_results.length > 1 && (
         <div className={`card flex items-center gap-4 ${VERDICT_STYLES[combined_verdict] || ''}`}>
           <div className="flex-1">
-            <p className="text-xs font-semibold uppercase tracking-wide opacity-70 mb-1">Combined Verdict (Majority Vote)</p>
+            <p className="text-xs font-semibold uppercase tracking-wide opacity-70 mb-1">Combined Verdict (Escalation Strategy)</p>
             <p className="text-xl font-bold">{combined_verdict}</p>
           </div>
           <div className="text-4xl">
