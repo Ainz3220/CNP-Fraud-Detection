@@ -16,7 +16,8 @@
       "Bash(pip install *)",
       "Bash(Remove-Item \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/lr_model.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/rf_model.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/xgb_model.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/pipeline.pkl\", \"c:/Codes/CNP-Fraud-Detection/backend/saved_models/preprocess_cache.pkl\" -ErrorAction SilentlyContinue)",
       "Bash(python3 -c ' *)",
-      "Bash(python -c \"import json; d=json.load\\(open\\('backend/saved_models/metrics.json'\\)\\); print\\(d.get\\('_meta'\\)\\)\")"
+      "Bash(python -c \"import json; d=json.load\\(open\\('backend/saved_models/metrics.json'\\)\\); print\\(d.get\\('_meta'\\)\\)\")",
+      "Bash(python evaluate_ensemble.py)"
     ]
   }
 }

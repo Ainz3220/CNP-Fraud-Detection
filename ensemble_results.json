@@ -1,0 +1,30 @@
+{
+  "partitions": {
+    "train": {
+      "n": 176912,
+      "fraud": 2372
+    },
+    "calibration": {
+      "n": 58971,
+      "fraud": 659
+    },
+    "validation": {
+      "n": 58971,
+      "fraud": 545
+    }
+  },
+  "ensemble_matrix": {
+    "legitimate": {
+      "APPROVED": 56273,
+      "REVIEW REQUIRED": 1434,
+      "FRAUD BLOCKED": 719
+    },
+    "fraud": {
+      "APPROVED": 0,
+      "REVIEW REQUIRED": 1,
+      "FRAUD BLOCKED": 544
+    }
+  },
+  "ensemble_block_precision": 0.4307205067300079,
+  "ensemble_block_recall": 0.998165137614679
+}
