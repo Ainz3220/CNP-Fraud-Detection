@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import ModelSelector from '../components/ModelSelector'
-import { predictBatchStream } from '../services/api'
+import { predictBatch } from '../services/api'
 import toast from 'react-hot-toast'
 
 const VERDICT_STYLES = {
@@ -14,7 +14,6 @@ export default function BatchPredict({ modelsLoaded }) {
   const [file, setFile] = useState(null)
   const [selectedModels, setSelectedModels] = useState(['lr', 'rf', 'xgb'])
   const [loading, setLoading] = useState(false)
-  const [progress, setProgress] = useState(0)
   const [rows, setRows] = useState([])
   const [csvBlob, setCsvBlob] = useState(null)
   const [stats, setStats] = useState(null)
@@ -29,30 +28,17 @@ export default function BatchPredict({ modelsLoaded }) {
     multiple: false,
   })
 
-  const [progressText, setProgressText] = useState('')
-
   const handleSubmit = async () => {
     if (!file) return
     if (!modelsLoaded) { toast.error('Models are still loading.'); return }
 
     setLoading(true)
-    setProgress(0)
-    setProgressText('')
     setRows([])
     setCsvBlob(null)
     setStats(null)
 
     try {
-      const blob = await predictBatchStream(
-        file,
-        selectedModels.join(','),
-        (processed, total) => {
-          setProgress(Math.round((processed / total) * 100))
-          setProgressText(`${processed} / ${total} rows`)
-        }
-      )
-      setProgress(100)
-      setProgressText('Done')
+      const blob = await predictBatch(file, selectedModels.join(','))
       setCsvBlob(blob)
 
       const text = await blob.text()
@@ -127,17 +113,9 @@ export default function BatchPredict({ modelsLoaded }) {
         </div>
 
         {loading && (
-          <div>
-            <div className="flex justify-between text-sm mb-1">
-              <span>{progressText ? `Processing… ${progressText}` : 'Starting…'}</span>
-              <span>{progress}%</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-              <div
-                className="h-full bg-indigo-600 rounded-full transition-all duration-300"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+          <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
+            <div className="animate-spin w-4 h-4 border-2 border-indigo-500 border-t-transparent rounded-full" />
+            Processing file...
           </div>
         )}
 

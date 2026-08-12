@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { getHistory, submitFeedback, MUR_TO_USD } from '../services/api'
-import ExplanationCard from '../components/ExplanationCard'
-import toast from 'react-hot-toast'
+import { getHistory, MUR_TO_USD } from '../services/api'
 
 const VERDICT_STYLES = {
   'FRAUD BLOCKED': 'verdict-fraud',
@@ -35,13 +33,9 @@ function Pagination({ page, pages, onChange }) {
   )
 }
 
-const FEEDBACK_LABELS = { 0: 'Legitimate', 1: 'Fraud' }
-
 export default function History() {
   const [data, setData] = useState({ items: [], total: 0, page: 1, pages: 1 })
   const [loading, setLoading] = useState(true)
-  const [expanded, setExpanded] = useState(null)
-  const [feedbackState, setFeedbackState] = useState({}) // id -> { label, submitting }
   const [filters, setFilters] = useState({
     page: 1,
     limit: 20,
@@ -68,23 +62,6 @@ export default function History() {
 
   const updateFilter = (key, val) => setFilters(f => ({ ...f, [key]: val, page: 1 }))
   const setPage = (p) => setFilters(f => ({ ...f, page: p }))
-
-  const handleFeedback = async (id, label) => {
-    setFeedbackState(s => ({ ...s, [id]: { label, submitting: true } }))
-    try {
-      await submitFeedback(id, label)
-      setFeedbackState(s => ({ ...s, [id]: { label, submitting: false } }))
-      toast.success(`Marked as ${FEEDBACK_LABELS[label]}`)
-    } catch {
-      setFeedbackState(s => ({ ...s, [id]: { label: undefined, submitting: false } }))
-    }
-  }
-
-  const getAnalystLabel = (row) => {
-    const fb = feedbackState[row.id]
-    if (fb?.label !== undefined) return fb.label
-    return row.analyst_label
-  }
 
   return (
     <div className="space-y-5">
@@ -136,14 +113,12 @@ export default function History() {
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Model</th>
                 <th className="text-right px-4 py-3 font-medium text-gray-500">Fraud Prob.</th>
                 <th className="text-left px-4 py-3 font-medium text-gray-500">Verdict</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Analyst Label</th>
-                <th className="text-left px-4 py-3 font-medium text-gray-500">Main Reason</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-gray-400">
+                  <td colSpan={6} className="text-center py-12 text-gray-400">
                     <div className="flex items-center justify-center gap-2">
                       <div className="animate-spin w-5 h-5 border-2 border-indigo-500 border-t-transparent rounded-full" />
                       Loading...
@@ -152,79 +127,27 @@ export default function History() {
                 </tr>
               ) : data.items.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-12 text-gray-400">No records found.</td>
+                  <td colSpan={6} className="text-center py-12 text-gray-400">No records found.</td>
                 </tr>
               ) : (
-                data.items.map(row => {
-                  const analystLabel = getAnalystLabel(row)
-                  const fb = feedbackState[row.id]
-                  return (
-                    <React.Fragment key={row.id}>
-                      <tr
-                        className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                        onClick={() => setExpanded(expanded === row.id ? null : row.id)}
-                      >
-                        <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
-                          {row.timestamp ? new Date(row.timestamp).toLocaleString() : '—'}
-                        </td>
-                        <td className="px-4 py-3 text-right font-mono">MUR {(parseFloat(row.amount || 0) * MUR_TO_USD).toFixed(2)}</td>
-                        <td className="px-4 py-3 capitalize">{row.category || '—'}</td>
-                        <td className="px-4 py-3 uppercase text-xs">{MODEL_LABELS[row.model_used] || row.model_used}</td>
-                        <td className="px-4 py-3 text-right font-mono">
-                          {row.fraud_probability != null ? `${(row.fraud_probability * 100).toFixed(1)}%` : '—'}
-                        </td>
-                        <td className="px-4 py-3">
-                          <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${VERDICT_STYLES[row.verdict] || ''}`}>
-                            {row.verdict}
-                          </span>
-                        </td>
-                        <td className="px-4 py-3">
-                          {analystLabel != null ? (
-                            <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${analystLabel === 1 ? 'verdict-fraud' : 'verdict-safe'}`}>
-                              {FEEDBACK_LABELS[analystLabel]}
-                            </span>
-                          ) : (
-                            <span className="text-xs text-gray-400">—</span>
-                          )}
-                        </td>
-                        <td className="px-4 py-3 text-xs text-gray-500">{row.main_reason || '—'}</td>
-                      </tr>
-                      {expanded === row.id && (
-                        <tr className="bg-gray-50">
-                          <td colSpan={8} className="px-6 py-4 space-y-4">
-                            <ExplanationCard explanation={row.explanation} />
-                            <div className="flex items-center gap-3 pt-2 border-t border-gray-200">
-                              <span className="text-xs font-medium text-gray-500">Analyst Feedback:</span>
-                              <button
-                                disabled={fb?.submitting}
-                                onClick={e => { e.stopPropagation(); handleFeedback(row.id, 1) }}
-                                className={`text-xs px-3 py-1 rounded font-medium border transition-colors ${
-                                  analystLabel === 1
-                                    ? 'bg-red-100 border-red-400 text-red-700'
-                                    : 'border-gray-300 hover:bg-red-50 hover:border-red-400 hover:text-red-700'
-                                } disabled:opacity-50`}
-                              >
-                                Mark as Fraud
-                              </button>
-                              <button
-                                disabled={fb?.submitting}
-                                onClick={e => { e.stopPropagation(); handleFeedback(row.id, 0) }}
-                                className={`text-xs px-3 py-1 rounded font-medium border transition-colors ${
-                                  analystLabel === 0
-                                    ? 'bg-green-100 border-green-400 text-green-700'
-                                    : 'border-gray-300 hover:bg-green-50 hover:border-green-400 hover:text-green-700'
-                                } disabled:opacity-50`}
-                              >
-                                Mark as Legitimate
-                              </button>
-                              {fb?.submitting && <span className="text-xs text-gray-400">Saving...</span>}
-                            </div>
-                          </td>
-                        </tr>
-                      )}
-                    </React.Fragment>
-                  )
-                })
+                data.items.map(row => (
+                  <tr key={row.id} className="border-b border-gray-100">
+                    <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
+                      {row.timestamp ? new Date(row.timestamp).toLocaleString() : '—'}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono">MUR {(parseFloat(row.amount || 0) * MUR_TO_USD).toFixed(2)}</td>
+                    <td className="px-4 py-3 capitalize">{row.category || '—'}</td>
+                    <td className="px-4 py-3 uppercase text-xs">{MODEL_LABELS[row.model_used] || row.model_used}</td>
+                    <td className="px-4 py-3 text-right font-mono">
+                      {row.fraud_probability != null ? `${(row.fraud_probability * 100).toFixed(1)}%` : '—'}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${VERDICT_STYLES[row.verdict] || ''}`}>
+                        {row.verdict}
+                      </span>
+                    </td>
+                  </tr>
+                ))
               )}
             </tbody>
           </table>

@@ -5,27 +5,19 @@ from database.db import Base
 
 
 class Prediction(Base):
+    """One row per (transaction, model) prediction, for the /api/history page."""
+
     __tablename__ = "predictions"
 
     id = Column(Integer, primary_key=True, index=True)
-    timestamp = Column(DateTime, default=datetime.utcnow)
-    transaction_data = Column(Text)  # JSON string
+    transaction_data = Column(Text)  # the submitted transaction, as a JSON string
     model_used = Column(String(50))
     fraud_probability = Column(Float)
     verdict = Column(String(30))
-    explanation = Column(Text)  # JSON string
     created_at = Column(DateTime, default=datetime.utcnow)
-    analyst_label = Column(Integer, nullable=True)   # 0=legit, 1=fraud, None=no feedback
-    feedback_at = Column(DateTime, nullable=True)
 
     def set_transaction_data(self, data: dict):
         self.transaction_data = json.dumps(data)
 
     def get_transaction_data(self) -> dict:
         return json.loads(self.transaction_data) if self.transaction_data else {}
-
-    def set_explanation(self, data):
-        self.explanation = json.dumps(data)
-
-    def get_explanation(self):
-        return json.loads(self.explanation) if self.explanation else {}

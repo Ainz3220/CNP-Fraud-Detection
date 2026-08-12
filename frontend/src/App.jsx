@@ -4,7 +4,6 @@ import Navbar from './components/Navbar'
 import Dashboard from './pages/Dashboard'
 import Predict from './pages/Predict'
 import BatchPredict from './pages/BatchPredict'
-import Retrain from './pages/Retrain'
 import History from './pages/History'
 import { getStatus } from './services/api'
 
@@ -35,7 +34,6 @@ export default function App() {
           <Route path="/dashboard" element={<Dashboard modelsLoaded={modelsLoaded} />} />
           <Route path="/predict" element={<Predict modelsLoaded={modelsLoaded} />} />
           <Route path="/batch" element={<BatchPredict modelsLoaded={modelsLoaded} />} />
-          <Route path="/retrain" element={<Retrain />} />
           <Route path="/history" element={<History />} />
         </Routes>
       </main>

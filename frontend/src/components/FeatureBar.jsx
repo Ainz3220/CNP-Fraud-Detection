@@ -11,6 +11,7 @@ const FEATURE_LABELS = {
 }
 
 export default function FeatureBar({ features = [] }) {
+  if (features.length === 0) return null
   const maxAbs = Math.max(...features.map(f => Math.abs(f.shap)), 0.001)
 
   return (

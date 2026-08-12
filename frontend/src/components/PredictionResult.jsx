@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import FraudGauge from './FraudGauge'
-import ExplanationCard from './ExplanationCard'
 import FeatureBar from './FeatureBar'
 
 const VERDICT_STYLES = {
@@ -61,7 +60,6 @@ export default function PredictionResult({ result }) {
           className={`card ${model_results.length > 1 && i !== activeTab ? 'hidden' : ''}`}
         >
           <div className="flex flex-col sm:flex-row gap-6">
-            {/* Gauge */}
             <div className="flex flex-col items-center gap-2 flex-shrink-0">
               <FraudGauge probability={r.fraud_probability} size={140} />
               <span className={`text-sm font-bold px-3 py-1 rounded-full ${VERDICT_STYLES[r.verdict] || ''}`}>
@@ -75,21 +73,12 @@ export default function PredictionResult({ result }) {
               </div>
             </div>
 
-            <div className="flex-1 space-y-4">
-              {/* Explanation */}
-              <div>
-                <h3 className="text-sm font-semibold mb-2">Explanation</h3>
-                <ExplanationCard explanation={r.explanation} />
+            {r.top_features && r.top_features.length > 0 && (
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold mb-2">Top Contributing Features</h3>
+                <FeatureBar features={r.top_features} />
               </div>
-
-              {/* Feature importance */}
-              {r.shap_features && r.shap_features.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">Feature Contributions</h3>
-                  <FeatureBar features={r.shap_features} />
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
       ))}

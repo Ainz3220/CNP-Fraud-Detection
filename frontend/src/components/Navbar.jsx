@@ -5,7 +5,6 @@ const links = [
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/predict', label: 'Predict' },
   { to: '/batch', label: 'Batch' },
-  { to: '/retrain', label: 'Retrain' },
   { to: '/history', label: 'History' },
 ]
 

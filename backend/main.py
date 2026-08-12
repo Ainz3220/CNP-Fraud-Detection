@@ -1,19 +1,21 @@
-"""CNP Fraud Detection — FastAPI application entry point."""
+"""CNP Fraud Detection — FastAPI application entry point.
 
-import asyncio
+This file wires together the whole backend: it starts model training in the
+background on startup, then exposes a small set of HTTP endpoints that the
+frontend calls to get predictions, metrics, and prediction history.
+"""
+
 import io
 import json
 import logging
 import os
 import threading
 from datetime import datetime
-from pathlib import Path
-from typing import List, Optional
+from typing import Optional
 
-import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, File, Header, HTTPException, Query, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Query, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -24,28 +26,19 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s — %(message)s")
 logger = logging.getLogger(__name__)
 
+# Folders that hold the trained model files (.pkl) and the raw CSV dataset.
 MODEL_DIR = os.getenv("MODEL_DIR", "./saved_models")
 DATA_DIR = os.getenv("DATA_DIR", "./data")
-UPLOAD_SECRET = os.getenv("UPLOAD_SECRET", "")
 
-# ── Database ──────────────────────────────────────────────────────────────────
 from database.db import get_db, init_db
 from database.models import Prediction
-
-# ── ML ────────────────────────────────────────────────────────────────────────
-from datautils.upload import validate_predict_csv, validate_retrain_csv
-from models.train import (
-    get_training_status,
-    load_all_models,
-    models_exist,
-    retrain_with_new_data,
-    train,
-)
+from datautils.upload import validate_predict_csv
+from models.train import load_all_models, models_exist, train
 from models.predict import predict_batch, predict_single
-from models.explain import invalidate_cache
 
 app = FastAPI(title="CNP Fraud Detection API", version="1.0.0")
 
+# Allow the frontend (running on a different port) to call this API.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -54,7 +47,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ── Global model state ────────────────────────────────────────────────────────
+# ── In-memory model state ────────────────────────────────────────────────────
+# The trained models are loaded once into these variables and reused for
+# every request, instead of reading the .pkl files from disk each time.
 _models: dict = {}
 _pipeline = None
 _metrics: dict = {}
@@ -63,6 +58,7 @@ _load_lock = threading.Lock()
 
 
 def _load_models():
+    """Load the trained models, preprocessing pipeline, and metrics into memory."""
     global _models, _pipeline, _metrics, _models_loaded
     with _load_lock:
         if _models_loaded:
@@ -76,15 +72,12 @@ def _load_models():
 
 
 def _train_if_needed():
+    """Train models from the CSV dataset if no saved models exist yet, then load them."""
     train_csv = os.path.join(DATA_DIR, "fraudTrain.csv")
     test_csv = os.path.join(DATA_DIR, "fraudTest.csv")
     if not models_exist(MODEL_DIR):
         if not os.path.exists(train_csv):
-            logger.warning(
-                "Training data not found at %s. Place fraudTrain.csv (and optionally fraudTest.csv) "
-                "in the data/ directory and restart, or POST to /api/retrain.",
-                train_csv,
-            )
+            logger.warning("Training data not found at %s. Add fraudTrain.csv to the data/ folder and restart.", train_csv)
             return
         logger.info("No saved models found — starting training...")
         try:
@@ -102,18 +95,19 @@ def _train_if_needed():
 @app.on_event("startup")
 async def startup_event():
     init_db()
+    # Training can take a while, so it runs on a background thread instead of
+    # blocking the API from starting up.
     thread = threading.Thread(target=_train_if_needed, daemon=True)
     thread.start()
 
 
-_TREE_MAX_THRESHOLD = 0.40  # cap for tree models only — LR uses its own calibrated threshold
+# Random Forest and XGBoost tend to predict very low probabilities even for
+# fraud, so their "fraud" threshold is capped lower than Logistic Regression's.
+_TREE_MAX_THRESHOLD = 0.40
 
 
 def _extract_thresholds(metrics: dict) -> dict:
-    """Pull optimal_threshold per model from metrics.json.
-    Tree models (RF, XGB) are capped at _TREE_MAX_THRESHOLD so high probabilities
-    still trigger verdicts; LR keeps its own calibrated threshold unchanged.
-    """
+    """Read each model's fraud-decision threshold out of metrics.json."""
     result = {}
     for name in ("lr", "rf", "xgb"):
         t = metrics.get(name, {}).get("optimal_threshold")
@@ -128,7 +122,7 @@ def require_models():
     return _models, _pipeline
 
 
-# ── Schemas ───────────────────────────────────────────────────────────────────
+# ── Request body for a single prediction ─────────────────────────────────────
 
 class TransactionInput(BaseModel):
     amt: float
@@ -142,30 +136,22 @@ class TransactionInput(BaseModel):
     long: Optional[float] = None
     merch_lat: Optional[float] = None
     merch_long: Optional[float] = None
-    trans_date_trans_time: Optional[str] = None
-    merchant: Optional[str] = None
-    dob: Optional[str] = None
-    job: Optional[str] = None
-    zip: Optional[int] = None
-    city: Optional[str] = None
-    unix_time: Optional[int] = None
-    trans_num: Optional[str] = None
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
 
 @app.get("/api/status")
 def get_status():
-    training_status = get_training_status()
+    """Tell the frontend whether the models have finished loading/training."""
     return {
         "models_loaded": _models_loaded,
-        "training_status": training_status,
         "available_models": list(_models.keys()) if _models_loaded else [],
     }
 
 
 @app.get("/api/metrics")
 def get_metrics():
+    """Return the accuracy/precision/recall/etc. metrics computed during training."""
     if not _metrics:
         metrics_path = os.path.join(MODEL_DIR, "metrics.json")
         if os.path.exists(metrics_path):
@@ -175,67 +161,29 @@ def get_metrics():
     return _metrics
 
 
-@app.post("/api/models/upload")
-async def upload_models(
-    files: List[UploadFile] = File(...),
-    x_upload_secret: Optional[str] = Header(default=None),
-):
-    """
-    Accept pre-trained model files uploaded from a local machine.
-    Expects: lr_model.pkl, rf_model.pkl, xgb_model.pkl, pipeline.pkl, metrics.json
-    Protected by the X-Upload-Secret header (must match UPLOAD_SECRET env var).
-    """
-    if UPLOAD_SECRET and x_upload_secret != UPLOAD_SECRET:
-        raise HTTPException(status_code=401, detail="Invalid or missing X-Upload-Secret header.")
-
-    allowed = {"lr_model.pkl", "rf_model.pkl", "xgb_model.pkl", "pipeline.pkl", "metrics.json"}
-    saved = []
-
-    Path(MODEL_DIR).mkdir(parents=True, exist_ok=True)
-    for f in files:
-        if f.filename not in allowed:
-            raise HTTPException(status_code=400, detail=f"Unexpected file: {f.filename}. Allowed: {sorted(allowed)}")
-        dest = os.path.join(MODEL_DIR, f.filename)
-        content = await f.read()
-        with open(dest, "wb") as out:
-            out.write(content)
-        saved.append(f.filename)
-        logger.info(f"Uploaded model file: {f.filename} ({len(content):,} bytes)")
-
-    # Reload models into memory if all required files are now present
-    global _models, _pipeline, _metrics, _models_loaded
-    if models_exist(MODEL_DIR):
-        invalidate_cache()
-        _models_loaded = False  # force reload
-        _load_models()
-        logger.info("Models reloaded after upload.")
-
-    return {"uploaded": saved, "models_loaded": _models_loaded}
-
-
 @app.post("/api/predict")
 def predict(
     transaction: TransactionInput,
     models: str = Query(default="lr,rf,xgb"),
     db: Session = Depends(get_db),
 ):
+    """Predict fraud probability for a single transaction, using one or more models."""
     ml_models, pipeline = require_models()
     selected = [m.strip() for m in models.split(",") if m.strip() in ml_models]
     if not selected:
         raise HTTPException(status_code=400, detail="No valid models specified.")
 
-    tx_dict = transaction.model_dump(exclude_none=False)
+    tx_dict = transaction.model_dump()
     thresholds = _extract_thresholds(_metrics)
     result = predict_single(tx_dict, ml_models, pipeline, selected, thresholds=thresholds)
 
-    # Persist each model result to the database
+    # Save each model's result to the database so it shows up in /api/history.
     for model_result in result["model_results"]:
         pred = Prediction()
         pred.set_transaction_data(tx_dict)
         pred.model_used = model_result["model_name"]
         pred.fraud_probability = model_result["fraud_probability"]
         pred.verdict = model_result["verdict"]
-        pred.set_explanation(model_result["explanation"])
         db.add(pred)
     db.commit()
 
@@ -247,6 +195,7 @@ async def predict_batch_endpoint(
     file: UploadFile = File(...),
     models: str = Query(default="lr,rf,xgb"),
 ):
+    """Predict fraud probability for every row in an uploaded CSV, returning a CSV back."""
     ml_models, pipeline = require_models()
     selected = [m.strip() for m in models.split(",") if m.strip() in ml_models]
     if not selected:
@@ -270,118 +219,6 @@ async def predict_batch_endpoint(
     )
 
 
-@app.post("/api/feedback/{prediction_id}")
-def submit_feedback(
-    prediction_id: int,
-    label: int = Query(..., ge=0, le=1),
-    db: Session = Depends(get_db),
-):
-    rec = db.query(Prediction).filter(Prediction.id == prediction_id).first()
-    if not rec:
-        raise HTTPException(status_code=404, detail="Prediction not found.")
-    rec.analyst_label = label
-    rec.feedback_at = datetime.utcnow()
-    db.commit()
-    return {"id": prediction_id, "analyst_label": label}
-
-
-MUR_TO_USD = 49.0
-
-
-@app.post("/api/retrain")
-async def retrain_endpoint(
-    file: UploadFile = File(...),
-    currency: str = Query(default="USD", description="Currency of the 'amt' column: USD or MUR"),
-    db: Session = Depends(get_db),
-):
-    contents = await file.read()
-    new_df = pd.read_csv(io.BytesIO(contents))
-    new_df = validate_retrain_csv(new_df)
-
-    # Convert MUR amounts to USD so they're on the same scale as the training data
-    if currency.upper() == "MUR" and "amt" in new_df.columns:
-        new_df["amt"] = new_df["amt"] / MUR_TO_USD
-        logger.info(f"Converted {len(new_df)} rows from MUR to USD (÷{MUR_TO_USD}).")
-
-    # Merge analyst feedback from DB as additional labeled rows
-    feedback_rows = (
-        db.query(Prediction)
-        .filter(Prediction.analyst_label.isnot(None))
-        .all()
-    )
-    if feedback_rows:
-        fb_records = []
-        for rec in feedback_rows:
-            tx = rec.get_transaction_data()
-            tx["is_fraud"] = rec.analyst_label
-            fb_records.append(tx)
-        fb_df = pd.DataFrame(fb_records)
-        new_df = pd.concat([new_df, fb_df], ignore_index=True)
-
-    train_csv = os.path.join(DATA_DIR, "fraudTrain.csv")
-    if not os.path.exists(train_csv):
-        raise HTTPException(status_code=500, detail="Original training data not found on server.")
-
-    def _retrain():
-        global _models, _pipeline, _metrics, _models_loaded
-        try:
-            comparison = retrain_with_new_data(train_csv, new_df, MODEL_DIR)
-            invalidate_cache()
-            _models, _pipeline, _metrics = load_all_models(MODEL_DIR)
-            _models_loaded = True
-            return comparison
-        except Exception as e:
-            logger.error(f"Retraining failed: {e}")
-            raise
-
-    comparison = _retrain()
-    return comparison
-
-
-@app.post("/api/predict/batch/stream")
-async def predict_batch_stream(
-    file: UploadFile = File(...),
-    models: str = Query(default="lr,rf,xgb"),
-):
-    ml_models, pipeline = require_models()
-    selected = [m.strip() for m in models.split(",") if m.strip() in ml_models]
-    if not selected:
-        raise HTTPException(status_code=400, detail="No valid models specified.")
-
-    contents = await file.read()
-    df = pd.read_csv(io.BytesIO(contents))
-    df = validate_predict_csv(df)
-    thresholds = _extract_thresholds(_metrics)
-
-    total = len(df)
-
-    async def event_stream():
-        chunk_size = 20
-        result_chunks: List[pd.DataFrame] = []
-
-        for start in range(0, total, chunk_size):
-            chunk = df.iloc[start: start + chunk_size].copy()
-            chunk_result = await asyncio.to_thread(
-                predict_batch, chunk, ml_models, pipeline, selected, thresholds
-            )
-            result_chunks.append(chunk_result)
-            processed = min(start + chunk_size, total)
-            progress_event = json.dumps({"type": "progress", "processed": processed, "total": total})
-            yield f"data: {progress_event}\n\n"
-
-        full_result = pd.concat(result_chunks, ignore_index=True)
-        out = io.StringIO()
-        full_result.to_csv(out, index=False)
-        done_event = json.dumps({"type": "done", "csv": out.getvalue()})
-        yield f"data: {done_event}\n\n"
-
-    return StreamingResponse(
-        event_stream(),
-        media_type="text/event-stream",
-        headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
-    )
-
-
 @app.get("/api/history")
 def get_history(
     page: int = Query(default=1, ge=1),
@@ -392,6 +229,7 @@ def get_history(
     date_to: Optional[str] = Query(default=None),
     db: Session = Depends(get_db),
 ):
+    """Return a page of past predictions, optionally filtered by verdict/model/date."""
     query = db.query(Prediction)
 
     if verdict_filter:
@@ -415,10 +253,6 @@ def get_history(
     items = []
     for rec in records:
         tx = rec.get_transaction_data()
-        exp = rec.get_explanation()
-        main_reason = ""
-        if exp and exp.get("risk_factors"):
-            main_reason = exp["risk_factors"][0].get("feature", "")
         items.append({
             "id": rec.id,
             "timestamp": rec.created_at.isoformat() if rec.created_at else None,
@@ -427,11 +261,6 @@ def get_history(
             "model_used": rec.model_used,
             "fraud_probability": rec.fraud_probability,
             "verdict": rec.verdict,
-            "main_reason": main_reason,
-            "explanation": exp,
-            "transaction_data": tx,
-            "analyst_label": rec.analyst_label,
-            "feedback_at": rec.feedback_at.isoformat() if rec.feedback_at else None,
         })
 
     return {
@@ -445,13 +274,14 @@ def get_history(
 
 @app.get("/api/history/stats")
 def get_history_stats(db: Session = Depends(get_db)):
+    """Return summary counts used by the dashboard (totals + a 30-day trend)."""
+    from sqlalchemy import func
+
     total = db.query(Prediction).count()
     fraud = db.query(Prediction).filter(Prediction.verdict == "FRAUD BLOCKED").count()
     review = db.query(Prediction).filter(Prediction.verdict == "REVIEW REQUIRED").count()
     legit = db.query(Prediction).filter(Prediction.verdict == "APPROVED").count()
 
-    # Last 30 days daily breakdown
-    from sqlalchemy import func
     daily = (
         db.query(
             func.date(Prediction.created_at).label("date"),
