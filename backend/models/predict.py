@@ -14,6 +14,7 @@ import pandas as pd
 from datautils.preprocess import PreprocessingPipeline, resolve_home_coords, FEATURE_COLS
 from models.explain import get_shap_values, top_features
 from utils.feature_engineering import engineer_features
+from utils.text_explainer import generate_explanation
 
 logger = logging.getLogger(__name__)
 
@@ -100,6 +101,11 @@ def predict_single(
 
         shap_row = get_shap_values(name, models[name], X)[0]
         features = top_features(shap_row, raw_row, top_n=5)
+        explanation = generate_explanation(
+            shap_row,
+            raw_row,
+            category_stats=getattr(pipeline, "category_stats", None),
+        )
 
         model_results.append({
             "model_name": name,
@@ -109,6 +115,7 @@ def predict_single(
                 {"feature": feature, "shap": round(float(value), 4), "value": str(raw)}
                 for feature, value, raw in features
             ],
+            "explanation": explanation,
         })
 
     combined_verdict = majority_vote(verdicts) if verdicts else "APPROVED"

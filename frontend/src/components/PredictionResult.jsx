@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import FraudGauge from './FraudGauge'
-import FeatureBar from './FeatureBar'
+import ExplanationPanel from './ExplanationPanel'
 
 const VERDICT_STYLES = {
   'FRAUD BLOCKED': 'verdict-fraud',
@@ -66,19 +66,14 @@ export default function PredictionResult({ result }) {
                 {r.verdict}
               </span>
               <div className="text-center">
-                <p className="text-xs text-gray-500">{MODEL_BADGE[r.model_name]?.label}</p>
-                <span className="text-xs bg-gray-100 px-2 py-0.5 rounded font-medium">
+                <p className="text-sm text-gray-700">{MODEL_BADGE[r.model_name]?.label}</p>
+                <span className="text-xs bg-gray-700 text-white px-2 py-0.5 rounded font-medium">
                   {MODEL_BADGE[r.model_name]?.badge}
                 </span>
               </div>
             </div>
 
-            {r.top_features && r.top_features.length > 0 && (
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold mb-2">Top Contributing Features</h3>
-                <FeatureBar features={r.top_features} />
-              </div>
-            )}
+            <ExplanationPanel explanation={r.explanation} topFeatures={r.top_features} />
           </div>
         </div>
       ))}

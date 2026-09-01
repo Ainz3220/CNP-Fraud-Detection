@@ -1,0 +1,425 @@
+{"kind":"deck","id":"pr/rhl8tb","name":"Deck"}
+{"kind":"layout","layoutId":"/ppt/slideMasters/slideMaster1.xml","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"/ppt/slideLayouts/slideLayout1.xml","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/y90nupkv","slide":1,"title":"UNIVERSITY OF TECHNOLOGY, MAURITIUS","textShapes":11}
+{"kind":"shape","id":"sh/utg3698n","slide":1,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/547294r6","slide":1,"name":"institution","text":"UNIVERSITY OF TECHNOLOGY, MAURITIUS","textPreview":"UNIVERSITY OF TECHNOLOGY, MAURITIUS","textChars":35,"textLines":1,"bbox":[56,46,520,24]}
+{"kind":"textbox","id":"sh/k3yl0zql","slide":1,"name":"cover-title","text":"Interpretable ML for\nCNP fraud detection","textPreview":"Interpretable ML for | CNP fraud detection","textChars":40,"textLines":2,"bbox":[56,192,560,130]}
+{"kind":"textbox","id":"sh/7qp4be9c","slide":1,"name":"cover-subtitle","text":"Card-Not-Present e-commerce fraud\nMauritius-contextualised evaluation","textPreview":"Card-Not-Present e-commerce fraud | Mauritius-contextualised evaluation","textChars":69,"textLines":2,"bbox":[56,366,560,66]}
+{"kind":"textbox","id":"sh/65g3298r","slide":1,"name":"cover-presenter","text":"ALLY HOSSEN Muhammad Ismael\nMSc Artificial Intelligence with Machine Learning\nSupervisor: Dr. Panchoo Shireen","textPreview":"ALLY HOSSEN Muhammad Ismael | MSc Artificial Intelligence with Machine Learning | Supervisor: Dr. Panchoo Shireen","textChars":109,"textLines":3,"bbox":[56,526,540,96]}
+{"kind":"shape","id":"sh/ts7md4r2","slide":1,"name":"deployed-system-architecture-backing","bbox":[682,84,522,482]}
+{"kind":"textbox","id":"sh/fu94fe98","slide":1,"name":"date","text":"July 2026","textPreview":"July 2026","textChars":9,"textLines":1,"bbox":[56,660,200,24]}
+{"kind":"shape","id":"sh/hofulsf2","slide":1,"name":"polish-cover-rail","bbox":[34,224,6,142]}
+{"kind":"shape","id":"sh/ul4vaxgb","slide":1,"name":"polish-cover-label","bbox":[1020,44,204,28]}
+{"kind":"textbox","id":"sh/vmdcj2xw","slide":1,"name":"polish-cover-label-text","text":"DISSERTATION PRESENTATION","textPreview":"DISSERTATION PRESENTATION","textChars":25,"textLines":1,"bbox":[1032,50,180,16]}
+{"kind":"shape","id":"sh/4r6dg7et","slide":1,"name":"polish-theme-dot-1","bbox":[56,482,9,9]}
+{"kind":"textbox","id":"sh/5sfepcfe","slide":1,"name":"polish-theme-label-1","text":"DETECT","textPreview":"DETECT","textChars":6,"textLines":1,"bbox":[74,477,100,22]}
+{"kind":"shape","id":"sh/ipovexwn","slide":1,"name":"polish-theme-dot-2","bbox":[196,482,9,9]}
+{"kind":"textbox","id":"sh/3qxwn2x8","slide":1,"name":"polish-theme-label-2","text":"EXPLAIN","textPreview":"EXPLAIN","textChars":7,"textLines":1,"bbox":[214,477,100,22]}
+{"kind":"shape","id":"sh/sfqdkrep","slide":1,"name":"polish-theme-dot-3","bbox":[356,482,9,9]}
+{"kind":"textbox","id":"sh/dgzetcfa","slide":1,"name":"polish-theme-label-3","text":"DEPLOY","textPreview":"DEPLOY","textChars":6,"textLines":1,"bbox":[374,477,100,22]}
+{"kind":"shape","id":"sh/1cvuxc7e","slide":1,"name":"polish-progress-1-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/0bmd476t","slide":1,"name":"polish-progress-1-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/zadcv2p8","slide":1,"name":"polish-progress-1-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/e94v2hon","slide":1,"name":"polish-progress-1-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/90ve1w7q","slide":1,"name":"polish-progress-1-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/ozmd8r65","slide":1,"name":"polish-progress-1-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/nydczmpk","slide":1,"name":"polish-progress-1-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/mx4v6hoz","slide":1,"name":"polish-progress-1-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/p4bu5s76","slide":1,"name":"polish-progress-1-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/432dwn6l","slide":1,"name":"polish-progress-1-10","bbox":[731,690,16,3]}
+{"kind":"shape","id":"sh/vyp0je1s","slide":1,"name":"visual-cover-navy-rail","bbox":[0,0,14,720]}
+{"kind":"textbox","id":"sh/wzy1szid","slide":1,"name":"visual-cover-prevalence-value","text":"1.21%","textPreview":"1.21%","textChars":5,"textLines":1,"bbox":[56,434,110,34]}
+{"kind":"textbox","id":"sh/h072l4jy","slide":1,"name":"visual-cover-prevalence-label","text":"fraud prevalence","textPreview":"fraud prevalence","textChars":16,"textLines":1,"bbox":[170,443,190,22]}
+{"kind":"image","id":"im/5kjidwzq","slide":1,"name":"Picture 16","geometry":"roundRect","bbox":[688,139.73,510,370.55]}
+{"kind":"notes","id":"nt/y90nupkv","slide":1,"text":"Open with the problem and the promise of the project: detect online card fraud, but keep the reasoning visible to an analyst. This presentation focuses on the method, the evidence, and what the Mauritius tests do and do not establish.\n[Bullet points]\n- Project goal: interpretable CNP fraud detection\n- Mauritius-contextualised evaluation\n- End-to-end path from data to analyst UI\n[Sources]\n- User-provided dissertation PDF, title page and abstract, pp. i-iv; User-provided dissertation PDF, Figure 4, p. 42; embedded crop used as the cover visual"}
+{"kind":"slide","id":"sl/hwbqtkby","slide":2,"title":"CONTEXT","textShapes":16}
+{"kind":"shape","id":"sh/fadgzu58","slide":2,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/9072xkry","slide":2,"name":"section-label","text":"CONTEXT","textPreview":"CONTEXT","textChars":7,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/ozy1ofad","slide":2,"name":"page-number","text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/b29kza94","slide":2,"name":"slide-title","text":"CNP fraud is rare, so accuracy alone is not enough","textPreview":"CNP fraud is rare, so accuracy alone is not enough","textChars":50,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/a10jqpsj","slide":2,"name":"slide-subtitle","text":"The project treats fraud detection as a rare-event, analyst-facing decision problem.","textPreview":"The project treats fraud detection as a rare-event, analyst-facing decision problem.","textChars":84,"textLines":1,"bbox":[56,136,1120,32]}
+{"kind":"shape","id":"sh/x4r21kru","slide":2,"name":"rule","bbox":[56,198,1168,1]}
+{"kind":"textbox","id":"sh/w3i1sfa9","slide":2,"name":"metric-value","text":"1.21%","textPreview":"1.21%","textChars":5,"textLines":1,"bbox":[72,232,270,60]}
+{"kind":"textbox","id":"sh/r65knqtk","slide":2,"name":"metric-label","text":"fraud prevalence after CNP filtering","textPreview":"fraud prevalence after CNP filtering","textChars":36,"textLines":1,"bbox":[72,294,270,44]}
+{"kind":"shape","id":"sh/q5wjelsz","slide":2,"name":"rule","bbox":[390,232,1,104]}
+{"kind":"textbox","id":"sh/ove9o7yd","slide":2,"name":"metric-value","text":"1 : 81","textPreview":"1 : 81","textChars":6,"textLines":1,"bbox":[430,232,270,60]}
+{"kind":"textbox","id":"sh/9wnqhczy","slide":2,"name":"metric-label","text":"fraud to legitimate","textPreview":"fraud to legitimate","textChars":19,"textLines":1,"bbox":[430,294,270,44]}
+{"kind":"shape","id":"sh/mtwrmxg7","slide":2,"name":"rule","bbox":[748,232,1,104]}
+{"kind":"textbox","id":"sh/nu58f2hs","slide":2,"name":"metric-value","text":"3,576","textPreview":"3,576","textChars":5,"textLines":1,"bbox":[788,232,300,60]}
+{"kind":"textbox","id":"sh/wjy9sry9","slide":2,"name":"metric-label","text":"fraud cases in 294,854 transactions","textPreview":"fraud cases in 294,854 transactions","textChars":35,"textLines":1,"bbox":[788,294,300,44]}
+{"kind":"shape","id":"sh/xk7qlczu","slide":2,"name":"rule","bbox":[56,382,1168,1]}
+{"kind":"textbox","id":"sh/ahwrqhgj","slide":2,"name":"gap-title","text":"The research gap","textPreview":"The research gap","textChars":16,"textLines":1,"bbox":[72,418,300,32]}
+{"kind":"shape","id":"sh/bip8jmho","slide":2,"name":"Oval 16","bbox":[72,471,7,7]}
+{"kind":"textbox","id":"sh/cnupgny5","slide":2,"name":"Rectangle 17","text":"Most benchmark datasets hide behaviour behind PCA-anonymised features.","textPreview":"Most benchmark datasets hide behaviour behind PCA-anonymised features.","textChars":70,"textLines":1,"bbox":[92,464,500,52]}
+{"kind":"shape","id":"sh/do3q9szq","slide":2,"name":"Oval 18","bbox":[72,529,7,7]}
+{"kind":"textbox","id":"sh/t8byxkn2","slide":2,"name":"Rectangle 19","text":"A high-accuracy model can still miss the minority class.","textPreview":"A high-accuracy model can still miss the minority class.","textChars":56,"textLines":1,"bbox":[92,522,500,46]}
+{"kind":"shape","id":"sh/s72xofmh","slide":2,"name":"Oval 20","bbox":[72,587,7,7]}
+{"kind":"textbox","id":"sh/76twva5c","slide":2,"name":"Rectangle 21","text":"US-centric evidence does not automatically generalise to Mauritius.","textPreview":"US-centric evidence does not automatically generalise to Mauritius.","textChars":67,"textLines":1,"bbox":[92,580,500,46]}
+{"kind":"shape","id":"sh/65kfmpor","slide":2,"name":"research-aim-panel","bbox":[700,422,524,194]}
+{"kind":"textbox","id":"sh/hcvy14ne","slide":2,"name":"aim-label","text":"Aim","textPreview":"Aim","textChars":3,"textLines":1,"bbox":[732,448,110,30]}
+{"kind":"textbox","id":"sh/gbmxszmt","slide":2,"name":"aim-text","text":"Build a CNP fraud detector that is accurate enough to be useful, explainable enough to review, and deployable enough to test in a Mauritius context.","textPreview":"Build a CNP fraud detector that is accurate enough to be useful, explainable enough to review, and deployable enough to test in a Mauriti...","textChars":148,"textLines":1,"bbox":[732,488,440,90]}
+{"kind":"shape","id":"sh/u94fqp4n","slide":2,"name":"polish-title-rail-2","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/p0vy54na","slide":2,"name":"polish-title-underline-2","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/4zmxwzmp","slide":2,"name":"polish-progress-2-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/mlgvq147","slide":2,"name":"polish-progress-2-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/nmpcj6ls","slide":2,"name":"polish-progress-2-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/onydsbmd","slide":2,"name":"polish-progress-2-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/9o7ulg3y","slide":2,"name":"polish-progress-2-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/a9gvulkj","slide":2,"name":"polish-progress-2-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/ba9cn6l4","slide":2,"name":"polish-progress-2-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/wbidwb29","slide":2,"name":"polish-progress-2-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/xcrupg3u","slide":2,"name":"polish-progress-2-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/id0vylkf","slide":2,"name":"polish-progress-2-10","bbox":[731,690,16,3]}
+{"kind":"notes","id":"nt/hwbqtkby","slide":2,"text":"The key framing is the imbalance. In this filtered dataset, fraud is only 1.21 percent of transactions, or roughly one fraud case for every 81 legitimate transactions. That is why I use precision, recall, F1 and PR-AUC as the main evidence rather than accuracy alone. The project also addresses interpretability and contextual validity.\n[Bullet points]\n- Fraud is only 1.21% of 294,854 transactions\n- Accuracy can hide minority-class failures\n- Precision, recall, F1 and PR-AUC are prioritised\n[Sources]\n- User-provided dissertation PDF, abstract p. iv and methodology pp. 27-29; User-provided dissertation PDF, problem statement pp. 4-6"}
+{"kind":"slide","id":"sl/ofy9wn61","slide":3,"title":"DATA AND FEATURES","textShapes":13}
+{"kind":"shape","id":"sh/w7ulsvqp","slide":3,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/cza94vmx","slide":3,"name":"section-label","text":"DATA AND FEATURES","textPreview":"DATA AND FEATURES","textChars":17,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/d0jax03i","slide":3,"name":"page-number","text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/298ryl4v","slide":3,"name":"slide-title","text":"Named behavioural features keep the signal interpretable","textPreview":"Named behavioural features keep the signal interpretable","textChars":56,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/3ah8rqlg","slide":3,"name":"slide-subtitle","text":"Only unambiguously online merchant categories were retained for the final CNP experiment.","textPreview":"Only unambiguously online merchant categories were retained for the final CNP experiment.","textChars":89,"textLines":1,"bbox":[56,136,1120,32]}
+{"kind":"textbox","id":"sh/obq90bml","slide":3,"name":"data-label","text":"FINAL MODELLING SET","textPreview":"FINAL MODELLING SET","textChars":19,"textLines":1,"bbox":[56,208,300,24]}
+{"kind":"textbox","id":"sh/pcjqtg36","slide":3,"name":"data-total","text":"294,854","textPreview":"294,854","textChars":7,"textLines":1,"bbox":[56,246,340,70]}
+{"kind":"textbox","id":"sh/m5cra54z","slide":3,"name":"data-summary","text":"transactions\n3,576 fraud cases\n~81:1 imbalance","textPreview":"transactions | 3,576 fraud cases | ~81:1 imbalance","textChars":46,"textLines":3,"bbox":[56,326,340,100]}
+{"kind":"shape","id":"sh/n6ls3alk","slide":3,"name":"rule","bbox":[56,454,520,1]}
+{"kind":"textbox","id":"sh/n2l4fq98","slide":3,"name":"filter-label","text":"CNP filter","textPreview":"CNP filter","textChars":10,"textLines":1,"bbox":[56,476,160,26]}
+{"kind":"textbox","id":"sh/m1c3mlsn","slide":3,"name":"filter-values","text":"grocery_net | misc_net | shopping_net","textPreview":"grocery_net | misc_net | shopping_net","textChars":37,"textLines":1,"bbox":[56,510,520,30]}
+{"kind":"textbox","id":"sh/943mhgre","slide":3,"name":"split-label","text":"Chronological split","textPreview":"Chronological split","textChars":19,"textLines":1,"bbox":[56,556,190,26]}
+{"kind":"textbox","id":"sh/83ulovat","slide":3,"name":"split-values","text":"60% train | 20% calibration | 20% validation","textPreview":"60% train | 20% calibration | 20% validation","textChars":44,"textLines":1,"bbox":[56,590,520,30]}
+{"kind":"shape","id":"sh/v6l4jq94","slide":3,"name":"feature-engineering-pipeline-backing","bbox":[644,196,532,442]}
+{"kind":"textbox","id":"sh/x8nml0ra","slide":3,"name":"feature-list","text":"7 named features: amount | hour | age | distance | amount z-score | category | gender","textPreview":"7 named features: amount | hour | age | distance | amount z-score | category | gender","textChars":85,"textLines":1,"bbox":[650,648,520,30]}
+{"kind":"shape","id":"sh/i9w3u58v","slide":3,"name":"polish-title-rail-3","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/e10f2twf","slide":3,"name":"polish-title-underline-3","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/f29gbyx0","slide":3,"name":"polish-progress-3-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/03ix43e5","slide":3,"name":"polish-progress-3-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/14ryd8fq","slide":3,"name":"polish-progress-3-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/6d0fytg3","slide":3,"name":"polish-progress-3-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/re9g7yxo","slide":3,"name":"polish-progress-3-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/sfix03y9","slide":3,"name":"polish-progress-3-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/tgry9ofu","slide":3,"name":"polish-progress-3-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/a9kfadwn","slide":3,"name":"polish-progress-3-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/batgjixs","slide":3,"name":"polish-progress-3-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/l4fi9cza","slide":3,"name":"polish-progress-3-10","bbox":[731,690,16,3]}
+{"kind":"shape","id":"sh/z2d07mh4","slide":3,"name":"visual-feature-input-rule","bbox":[650,176,34,3]}
+{"kind":"textbox","id":"sh/y14jehgj","slide":3,"name":"visual-feature-input-label","text":"7 FEATURE INPUTS","textPreview":"7 FEATURE INPUTS","textChars":16,"textLines":1,"bbox":[694,166,220,22]}
+{"kind":"image","id":"im/udwrup0v","slide":3,"name":"Picture 32","geometry":"roundRect","bbox":[706.58,202,406.85,430]}
+{"kind":"notes","id":"nt/ofy9wn61","slide":3,"text":"The data was filtered before feature engineering to keep the task specifically about card-not-present transactions. The seven features deliberately describe behaviour: transaction amount, time of day, age, distance from home, category-relative amount z-score, category and gender. The chronological split is intended to mimic training on historical transactions and predicting future ones.\n[Bullet points]\n- Filtered data: 294,854 CNP transactions and 3,576 fraud cases\n- Named behavioural features keep the signal explainable\n- Chronological 60/20/20 split mirrors future prediction\n[Sources]\n- User-provided dissertation PDF, methodology pp. 27-32, Tables 3-4; User-provided dissertation PDF, Figure 3, p. 31; embedded crop shown on slide; Project repository, backend/utils/feature_engineering.py and backend/datautils/preprocess.py"}
+{"kind":"slide","id":"sl/jyx0ra1s","slide":4,"title":"METHOD","textShapes":24}
+{"kind":"shape","id":"sh/knex8j21","slide":4,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/1cj2d8b6","slide":4,"name":"section-label","text":"METHOD","textPreview":"METHOD","textChars":6,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/0ba143al","slide":4,"name":"page-number","text":"04","textPreview":"04","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/rm1k7yt4","slide":4,"name":"slide-title","text":"Three models share one cost-sensitive training path","textPreview":"Three models share one cost-sensitive training path","textChars":51,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/ql8jytsj","slide":4,"name":"slide-subtitle","text":"The comparison separates model capacity from the data and evaluation decisions.","textPreview":"The comparison separates model capacity from the data and evaluation decisions.","textChars":79,"textLines":1,"bbox":[56,136,1120,32]}
+{"kind":"textbox","id":"sh/doj29oba","slide":4,"name":"input-title","text":"One transformed input","textPreview":"One transformed input","textChars":21,"textLines":1,"bbox":[56,220,290,32]}
+{"kind":"textbox","id":"sh/sna103ap","slide":4,"name":"input-copy","text":"The same engineered feature vector feeds three complementary classifiers.","textPreview":"The same engineered feature vector feeds three complementary classifiers.","textChars":73,"textLines":1,"bbox":[56,260,390,58]}
+{"kind":"shape","id":"sh/3ihk3et8","slide":4,"name":"model-path","bbox":[365,345,675,0]}
+{"kind":"textbox","id":"sh/ih8ju9sn","slide":4,"name":"arrow-1","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[478,331,36,28]}
+{"kind":"textbox","id":"sh/kbm987y5","slide":4,"name":"arrow-2","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[704,331,36,28]}
+{"kind":"textbox","id":"sh/5cva1cfq","slide":4,"name":"arrow-3","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[930,331,36,28]}
+{"kind":"shape","id":"sh/i94r6xgz","slide":4,"name":"input-node","bbox":[330,320,50,50]}
+{"kind":"textbox","id":"sh/jadsz2xk","slide":4,"name":"input-node-text","text":"x","textPreview":"x","textChars":1,"textLines":1,"bbox":[346,327,18,20]}
+{"kind":"shape","id":"sh/w72947yt","slide":4,"name":"lr-node","bbox":[540,320,50,50]}
+{"kind":"textbox","id":"sh/x8vaxsfe","slide":4,"name":"lr-node-text","text":"LR","textPreview":"LR","textChars":2,"textLines":1,"bbox":[548,329,34,20]}
+{"kind":"shape","id":"sh/a5kr2xg3","slide":4,"name":"rf-node","bbox":[765,320,50,50]}
+{"kind":"textbox","id":"sh/v6tsv2xo","slide":4,"name":"rf-node-text","text":"RF","textPreview":"RF","textChars":2,"textLines":1,"bbox":[773,329,34,20]}
+{"kind":"shape","id":"sh/g36tgryd","slide":4,"name":"xgb-node","bbox":[990,320,50,50]}
+{"kind":"textbox","id":"sh/h4fa9wfy","slide":4,"name":"xgb-node-text","text":"XGB","textPreview":"XGB","textChars":3,"textLines":1,"bbox":[994,329,42,20]}
+{"kind":"textbox","id":"sh/p0batw72","slide":4,"name":"input-caption","text":"engineered\nfeatures","textPreview":"engineered | features","textChars":19,"textLines":2,"bbox":[292,390,130,46]}
+{"kind":"textbox","id":"sh/oz29krqh","slide":4,"name":"lr-caption","text":"interpretable\nbaseline","textPreview":"interpretable | baseline","textChars":22,"textLines":2,"bbox":[500,390,130,46]}
+{"kind":"textbox","id":"sh/3ytsrmpw","slide":4,"name":"rf-caption","text":"non-linear\nensemble","textPreview":"non-linear | ensemble","textChars":19,"textLines":2,"bbox":[725,390,130,46]}
+{"kind":"textbox","id":"sh/2xkrih8b","slide":4,"name":"xgb-caption","text":"boosted\ndetector","textPreview":"boosted | detector","textChars":16,"textLines":2,"bbox":[950,390,130,46]}
+{"kind":"shape","id":"sh/1wbapc7q","slide":4,"name":"rule","bbox":[56,490,1168,1]}
+{"kind":"shape","id":"sh/gv29g7q5","slide":4,"name":"Oval 24","bbox":[72,533,7,7]}
+{"kind":"textbox","id":"sh/fu9sn2p0","slide":4,"name":"Rectangle 25","text":"No SMOTE in the final pipeline.","textPreview":"No SMOTE in the final pipeline.","textChars":31,"textLines":1,"bbox":[92,526,310,40]}
+{"kind":"shape","id":"sh/et0reh8f","slide":4,"name":"Oval 26","bbox":[454,533,7,7]}
+{"kind":"textbox","id":"sh/tsrqlc7u","slide":4,"name":"Rectangle 27","text":"Native class weighting handles imbalance.","textPreview":"Native class weighting handles imbalance.","textChars":41,"textLines":1,"bbox":[474,526,310,40]}
+{"kind":"shape","id":"sh/sri9s7q9","slide":4,"name":"Oval 28","bbox":[836,533,7,7]}
+{"kind":"textbox","id":"sh/ilwf69kv","slide":4,"name":"Rectangle 29","text":"PR-AUC and F1 guide the comparison.","textPreview":"PR-AUC and F1 guide the comparison.","textChars":35,"textLines":1,"bbox":[856,526,320,40]}
+{"kind":"textbox","id":"sh/jm5gze1g","slide":4,"name":"verdict-tiers","text":"Runtime verdicts use three tiers: APPROVED | REVIEW REQUIRED | FRAUD BLOCKED","textPreview":"Runtime verdicts use three tiers: APPROVED | REVIEW REQUIRED | FRAUD BLOCKED","textChars":76,"textLines":1,"bbox":[72,610,1060,28]}
+{"kind":"shape","id":"sh/5ony1oj6","slide":4,"name":"polish-title-rail-4","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/axcf29kj","slide":4,"name":"polish-title-underline-4","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/vy5gbe14","slide":4,"name":"polish-progress-4-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/wzex4z2p","slide":4,"name":"polish-progress-4-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/xknyx4ja","slide":4,"name":"polish-progress-4-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/mtcfypkn","slide":4,"name":"polish-progress-4-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/nulw7u18","slide":4,"name":"polish-progress-4-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/fm5c3q54","slide":4,"name":"polish-progress-4-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/elwba54j","slide":4,"name":"polish-progress-4-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/18nu50nu","slide":4,"name":"polish-progress-4-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/0netcvm9","slide":4,"name":"polish-progress-4-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/rilczq5s","slide":4,"name":"polish-progress-4-10","bbox":[731,690,16,3]}
+{"kind":"textbox","id":"sh/qhcb6l47","slide":4,"name":"visual-model-tier-baseline","text":"BASELINE","textPreview":"BASELINE","textChars":8,"textLines":1,"bbox":[500,286,130,20]}
+{"kind":"textbox","id":"sh/dknu10ny","slide":4,"name":"visual-model-tier-nonlinear","text":"NON-LINEAR","textPreview":"NON-LINEAR","textChars":10,"textLines":1,"bbox":[725,286,130,20]}
+{"kind":"textbox","id":"sh/sjut8vmd","slide":4,"name":"visual-model-tier-advanced","text":"ADVANCED","textPreview":"ADVANCED","textChars":8,"textLines":1,"bbox":[950,286,130,20]}
+{"kind":"notes","id":"nt/jyx0ra1s","slide":4,"text":"The model comparison is intentionally compact: logistic regression provides an interpretable baseline, random forest captures non-linear rules, and XGBoost provides a stronger boosted detector. The final pipeline uses native class weighting rather than synthetic oversampling after SMOTE caused poor generalisation on new examples. Thresholds and the three-tier verdict are applied after model scoring.\n[Bullet points]\n- Logistic regression is the interpretable baseline\n- Random Forest captures non-linear rules\n- XGBoost provides a stronger boosted detector\n[Sources]\n- User-provided dissertation PDF, methodology pp. 33-38 and results pp. 57-60; Project repository, backend/models/train.py and backend/models/predict.py"}
+{"kind":"slide","id":"sl/i107q5of","slide":5,"title":"RESULTS","textShapes":14}
+{"kind":"shape","id":"sh/j6dwfqds","slide":5,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/dgbulwnm","slide":5,"name":"section-label","text":"RESULTS","textPreview":"RESULTS","textChars":7,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/cf2tcr61","slide":5,"name":"page-number","text":"05","textPreview":"05","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/z2tcnm5s","slide":5,"name":"slide-title","text":"XGBoost is strongest standalone; Random Forest is close","textPreview":"XGBoost is strongest standalone; Random Forest is close","textChars":55,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/yhkbe1o7","slide":5,"name":"slide-subtitle","text":"On the 58,971-row chronological validation set, the tree models dominate the interpretable baseline.","textPreview":"On the 58,971-row chronological validation set, the tree models dominate the interpretable baseline.","textChars":100,"textLines":1,"bbox":[56,136,1120,32]}
+{"kind":"shape","id":"sh/032tgr6d","slide":5,"name":"xgb-callout","bbox":[800,190,390,420]}
+{"kind":"textbox","id":"sh/n6dcr65o","slide":5,"name":"xgb-callout-title","text":"XGBoost","textPreview":"XGBoost","textChars":7,"textLines":1,"bbox":[832,226,300,34]}
+{"kind":"textbox","id":"sh/m5kbi1oj","slide":5,"name":"xgb-precision","text":"92.63%","textPreview":"92.63%","textChars":6,"textLines":1,"bbox":[832,278,300,60]}
+{"kind":"textbox","id":"sh/w32dkbuh","slide":5,"name":"metric-label","text":"precision","textPreview":"precision","textChars":9,"textLines":1,"bbox":[832,340,300,44]}
+{"kind":"textbox","id":"sh/x4vedgvm","slide":5,"name":"xgb-recall","text":"92.29%","textPreview":"92.29%","textChars":6,"textLines":1,"bbox":[832,378,300,60]}
+{"kind":"textbox","id":"sh/ahkvi1cb","slide":5,"name":"metric-label","text":"recall","textPreview":"recall","textChars":6,"textLines":1,"bbox":[832,440,300,44]}
+{"kind":"textbox","id":"sh/v2twb6dw","slide":5,"name":"xgb-prauc","text":"97.60%","textPreview":"97.60%","textChars":6,"textLines":1,"bbox":[832,478,300,60]}
+{"kind":"textbox","id":"sh/k7mxovud","slide":5,"name":"metric-label","text":"PR-AUC","textPreview":"PR-AUC","textChars":6,"textLines":1,"bbox":[832,540,300,44]}
+{"kind":"textbox","id":"sh/58vehgvy","slide":5,"name":"results-note","text":"RF: 91.29% F1 | 96.23% PR-AUC\nLR remains the sensitivity-oriented baseline.","textPreview":"RF: 91.29% F1 | 96.23% PR-AUC | LR remains the sensitivity-oriented baseline.","textChars":75,"textLines":2,"bbox":[832,570,320,48]}
+{"kind":"textbox","id":"sh/i54fmlc7","slide":5,"name":"accuracy-note","text":"Accuracy is omitted from the chart because all three models exceed 99% under the 81:1 class imbalance.","textPreview":"Accuracy is omitted from the chart because all three models exceed 99% under the 81:1 class imbalance.","textChars":102,"textLines":1,"bbox":[56,636,700,24]}
+{"kind":"shape","id":"sh/tcfel0vu","slide":5,"name":"polish-title-rail-5","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/hgrmpwj2","slide":5,"name":"polish-title-underline-5","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/gfi5grih","slide":5,"name":"polish-progress-5-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/fe94nm1w","slide":5,"name":"polish-progress-5-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/ud0ne10b","slide":5,"name":"polish-progress-5-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/pkr6tgjy","slide":5,"name":"polish-progress-5-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/4ji5kbid","slide":5,"name":"polish-progress-5-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/3i94r61s","slide":5,"name":"polish-progress-5-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/2h0ni107","slide":5,"name":"polish-progress-5-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/5o7mhcju","slide":5,"name":"polish-progress-5-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/kny587i9","slide":5,"name":"polish-progress-5-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/atcjidg7","slide":5,"name":"polish-progress-5-10","bbox":[731,690,16,3]}
+{"kind":"textbox","id":"sh/wve1knyx","slide":5,"name":"visual-results-best-label","text":"BEST STANDALONE","textPreview":"BEST STANDALONE","textChars":15,"textLines":1,"bbox":[1030,228,132,20]}
+{"kind":"shape","id":"sh/xwn2dszi","slide":5,"name":"visual-results-callout-rule","bbox":[832,268,300,2]}
+{"kind":"chart","id":"ch/2x0fyh8n","slide":5,"name":"Chart","chartType":"bar","bbox":[56,190,690,420]}
+{"kind":"notes","id":"nt/i107q5of","slide":5,"text":"The important result is not the small difference in accuracy. XGBoost reaches 92.63 percent precision, 92.29 percent recall, 92.46 percent F1 and 97.60 percent PR-AUC. Random Forest is close, with identical recall and slightly lower precision. Logistic regression still detects most fraud, but at a much higher false-positive cost. PR-AUC is the most meaningful summary here because it focuses on the minority class.\n[Bullet points]\n- XGBoost is strongest standalone: 92.63% precision\n- XGBoost reaches 92.29% recall and 97.60% PR-AUC\n- Random Forest is close with 91.29% F1 and 96.23% PR-AUC\n[Sources]\n- User-provided dissertation PDF, Tables 10-11, pp. 58-59; User-provided dissertation PDF, discussion of RQ1, pp. 64-65"}
+{"kind":"slide","id":"sl/x8f69ofe","slide":6,"title":"EXPLAINABILITY AND ENSEMBLE","textShapes":22}
+{"kind":"shape","id":"sh/1k3mhozu","slide":6,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/yhg7epsj","slide":6,"name":"section-label","text":"EXPLAINABILITY AND ENSEMBLE","textPreview":"EXPLAINABILITY AND ENSEMBLE","textChars":27,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/zi98nu94","slide":6,"name":"page-number","text":"06","textPreview":"06","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/87ipkzal","slide":6,"name":"slide-title","text":"A single strong signal can escalate the final verdict","textPreview":"A single strong signal can escalate the final verdict","textChars":53,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/98rqt4r6","slide":6,"name":"slide-subtitle","text":"SHAP explains the signal; the ensemble prevents disagreement from hiding a high-risk case.","textPreview":"SHAP explains the signal; the ensemble prevents disagreement from hiding a high-risk case.","textChars":90,"textLines":1,"bbox":[56,136,1120,32]}
+{"kind":"textbox","id":"sh/ml07i9sv","slide":6,"name":"shap-title","text":"SHAP turns model output into analyst language","textPreview":"SHAP turns model output into analyst language","textChars":45,"textLines":1,"bbox":[56,202,500,36]}
+{"kind":"shape","id":"sh/7m98ru9g","slide":6,"name":"Oval 6","bbox":[56,261,7,7]}
+{"kind":"textbox","id":"sh/oryp8fah","slide":6,"name":"Rectangle 7","text":"Risk factors push the decision toward fraud.","textPreview":"Risk factors push the decision toward fraud.","textChars":44,"textLines":1,"bbox":[76,254,480,38]}
+{"kind":"shape","id":"sh/pc76hkr2","slide":6,"name":"Oval 8","bbox":[56,313,7,7]}
+{"kind":"textbox","id":"sh/h4bupgn6","slide":6,"name":"Rectangle 9","text":"Legitimacy factors push the decision toward approval.","textPreview":"Legitimacy factors push the decision toward approval.","textChars":53,"textLines":1,"bbox":[76,306,480,52]}
+{"kind":"shape","id":"sh/w32twb6l","slide":6,"name":"Oval 10","bbox":[56,381,7,7]}
+{"kind":"textbox","id":"sh/v2tcn650","slide":6,"name":"Rectangle 11","text":"The text explainer converts attributions into plain English.","textPreview":"The text explainer converts attributions into plain English.","textChars":60,"textLines":1,"bbox":[76,374,480,52]}
+{"kind":"textbox","id":"sh/u1kbu1ov","slide":6,"name":"shap-features","text":"Most consistently important: amount z-score | distance | hour of day","textPreview":"Most consistently important: amount z-score | distance | hour of day","textChars":68,"textLines":1,"bbox":[56,448,560,54]}
+{"kind":"shape","id":"sh/5svutgni","slide":6,"name":"prediction-and-shap-interface-backing","bbox":[670,182,536,367]}
+{"kind":"shape","id":"sh/j6dcr65c","slide":6,"name":"ensemble-line","bbox":[76,588,924,0]}
+{"kind":"textbox","id":"sh/i54bylor","slide":6,"name":"ens-arrow-1","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[300,574,36,28]}
+{"kind":"textbox","id":"sh/twfux0ne","slide":6,"name":"ens-arrow-2","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[555,574,36,28]}
+{"kind":"textbox","id":"sh/svmt4v6t","slide":6,"name":"ens-arrow-3","text":"->","textPreview":"->","textChars":2,"textLines":1,"bbox":[825,574,36,28]}
+{"kind":"shape","id":"sh/cbe5g3ih","slide":6,"name":"lr-output","bbox":[56,558,190,60]}
+{"kind":"textbox","id":"sh/dcnm98zm","slide":6,"name":"lr-output-text","text":"LR 100%\nFRAUD BLOCKED","textPreview":"LR 100% | FRAUD BLOCKED","textChars":21,"textLines":2,"bbox":[72,568,158,40]}
+{"kind":"shape","id":"sh/qpwnet0b","slide":6,"name":"rf-output","bbox":[330,558,190,60]}
+{"kind":"textbox","id":"sh/bq547yhw","slide":6,"name":"rf-output-text","text":"RF 8%\nAPPROVED","textPreview":"RF 8% | APPROVED","textChars":14,"textLines":2,"bbox":[346,568,158,40]}
+{"kind":"shape","id":"sh/0fy5k3id","slide":6,"name":"xgb-output","bbox":[585,558,190,60]}
+{"kind":"textbox","id":"sh/lg76d8zy","slide":6,"name":"xgb-output-text","text":"XGB 0%\nAPPROVED","textPreview":"XGB 0% | APPROVED","textChars":15,"textLines":2,"bbox":[601,568,158,40]}
+{"kind":"shape","id":"sh/ydgnit07","slide":6,"name":"ensemble-output","bbox":[880,548,300,80]}
+{"kind":"textbox","id":"sh/zep4byhs","slide":6,"name":"ensemble-output-text","text":"MOST SEVERE VERDICT\nFRAUD BLOCKED","textPreview":"MOST SEVERE VERDICT | FRAUD BLOCKED","textChars":33,"textLines":2,"bbox":[900,561,260,52]}
+{"kind":"textbox","id":"sh/gju58ji9","slide":6,"name":"ensemble-note","text":"544/545 fraud cases were FRAUD BLOCKED; none were APPROVED. Block precision was 43.07% - the intentional cost of conservative escalation.","textPreview":"544/545 fraud cases were FRAUD BLOCKED; none were APPROVED. Block precision was 43.07% - the intentional cost of conservative escalation.","textChars":137,"textLines":1,"bbox":[56,652,1060,22]}
+{"kind":"shape","id":"sh/idk7ehkr","slide":6,"name":"polish-title-rail-6","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/50bqpcj2","slide":6,"name":"polish-title-underline-6","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/4f2pgr2h","slide":6,"name":"polish-progress-6-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/va98j210","slide":6,"name":"polish-progress-6-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/u907axkf","slide":6,"name":"polish-progress-6-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/hcrqlcj6","slide":6,"name":"polish-progress-6-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/wbipc72l","slide":6,"name":"polish-progress-6-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/7698f214","slide":6,"name":"polish-progress-6-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/m5076xkj","slide":6,"name":"polish-progress-6-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/2dkbalg3","slide":6,"name":"polish-progress-6-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/netcjqxo","slide":6,"name":"polish-progress-6-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/of2tcvy9","slide":6,"name":"polish-progress-6-10","bbox":[731,690,16,3]}
+{"kind":"textbox","id":"sh/ep0b6lg7","slide":6,"name":"visual-shap-flow-feature","text":"FEATURE","textPreview":"FEATURE","textChars":7,"textLines":1,"bbox":[56,514,94,22]}
+{"kind":"textbox","id":"sh/fq9cfqxc","slide":6,"name":"visual-shap-flow-arrow-1","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[156,514,26,22]}
+{"kind":"textbox","id":"sh/0r2t8vyx","slide":6,"name":"visual-shap-flow-impact","text":"SHAP IMPACT","textPreview":"SHAP IMPACT","textChars":11,"textLines":1,"bbox":[190,514,126,22]}
+{"kind":"textbox","id":"sh/1sbuh0fi","slide":6,"name":"visual-shap-flow-arrow-2","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[324,514,26,22]}
+{"kind":"textbox","id":"sh/ql0b21gv","slide":6,"name":"visual-shap-flow-verdict","text":"VERDICT","textPreview":"VERDICT","textChars":7,"textLines":1,"bbox":[358,514,100,22]}
+{"kind":"image","id":"im/wrylk361","slide":6,"name":"Picture 44","geometry":"roundRect","bbox":[680.12,188,515.75,355]}
+{"kind":"notes","id":"nt/x8f69ofe","slide":6,"text":"This is the reliability story of the system. SHAP shows which features push a transaction toward fraud or legitimacy, and the natural-language explanation makes that understandable to a non-technical analyst. In the extreme E3 benchmark, logistic regression produced a 100 percent fraud probability while the two tree models did not. The escalation rule therefore takes the most severe model verdict. This improves sensitivity, but it creates a precision cost: many blocked transactions still require human review.\n[Bullet points]\n- SHAP identifies fraud and legitimacy drivers\n- Natural-language explanations make the score reviewable\n- The most-severe verdict rule protects against a missed signal\n[Sources]\n- User-provided dissertation PDF, Figure 7, p. 52; embedded crop shown on slide; User-provided dissertation PDF, pp. 63-65 and Table 14; Project repository, backend/models/predict.py and backend/models/explain.py"}
+{"kind":"slide","id":"sl/gnmp4jqx","slide":7,"title":"PROTOTYPE AND CONTEXT","textShapes":26}
+{"kind":"shape","id":"sh/f6xkvq5c","slide":7,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/cb2tkvap","slide":7,"name":"section-label","text":"PROTOTYPE AND CONTEXT","textPreview":"PROTOTYPE AND CONTEXT","textChars":21,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/dcbud0ra","slide":7,"name":"page-number","text":"07","textPreview":"07","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/ydkbm5sv","slide":7,"name":"slide-title","text":"The prototype is deployed as an analyst-facing workflow","textPreview":"The prototype is deployed as an analyst-facing workflow","textChars":55,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/zedcfa9g","slide":7,"name":"slide-subtitle","text":"A real application connects prediction, explanation, history and analyst review.","textPreview":"A real application connects prediction, explanation, history and analyst review.","textChars":80,"textLines":1,"bbox":[56,136,1120,32]}
+{"kind":"textbox","id":"sh/kzmdova1","slide":7,"name":"benchmark-label","text":"MAURITIUS BENCHMARKS","textPreview":"MAURITIUS BENCHMARKS","textChars":20,"textLines":1,"bbox":[56,208,300,24]}
+{"kind":"shape","id":"sh/l0vuh0rm","slide":7,"name":"rule","bbox":[56,244,550,1]}
+{"kind":"textbox","id":"sh/eh0ba1sr","slide":7,"name":"e1-id","text":"E1","textPreview":"E1","textChars":2,"textLines":1,"bbox":[56,268,46,28]}
+{"kind":"textbox","id":"sh/fi9c369c","slide":7,"name":"e1-profile","text":"MUR 2,450 | 10:00 | 3.2 miles","textPreview":"MUR 2,450 | 10:00 | 3.2 miles","textChars":29,"textLines":1,"bbox":[120,268,400,28]}
+{"kind":"textbox","id":"sh/baxkjqlk","slide":7,"name":"e1-verdict","text":"APPROVED","textPreview":"APPROVED","textChars":8,"textLines":1,"bbox":[440,268,150,28]}
+{"kind":"shape","id":"sh/a9ojq5kz","slide":7,"name":"rule","bbox":[56,314,550,1]}
+{"kind":"textbox","id":"sh/xcz2l03q","slide":7,"name":"e2-id","text":"E2","textPreview":"E2","textChars":2,"textLines":1,"bbox":[56,338,46,28]}
+{"kind":"textbox","id":"sh/cbq1sv25","slide":7,"name":"e2-profile","text":"MUR 18,000 | 23:00 | 85 miles","textPreview":"MUR 18,000 | 23:00 | 85 miles","textChars":29,"textLines":1,"bbox":[120,338,400,28]}
+{"kind":"textbox","id":"sh/n6x0fqlo","slide":7,"name":"e2-verdict","text":"APPROVED","textPreview":"APPROVED","textChars":8,"textLines":1,"bbox":[440,338,150,28]}
+{"kind":"shape","id":"sh/25ojml43","slide":7,"name":"rule","bbox":[56,384,550,1]}
+{"kind":"textbox","id":"sh/p8fih03e","slide":7,"name":"e3-id","text":"E3","textPreview":"E3","textChars":2,"textLines":1,"bbox":[56,408,46,28]}
+{"kind":"textbox","id":"sh/o761ov2t","slide":7,"name":"e3-profile","text":"MUR 95,000 | 03:00 | 420 miles","textPreview":"MUR 95,000 | 03:00 | 420 miles","textChars":30,"textLines":1,"bbox":[120,408,400,28]}
+{"kind":"textbox","id":"sh/f2d0b6lc","slide":7,"name":"e3-verdict","text":"FRAUD BLOCKED","textPreview":"FRAUD BLOCKED","textChars":13,"textLines":1,"bbox":[398,408,192,28]}
+{"kind":"shape","id":"sh/eh4jil4r","slide":7,"name":"benchmark-note","bbox":[56,464,550,110]}
+{"kind":"textbox","id":"sh/id4ju1oz","slide":7,"name":"surprise-label","text":"The useful surprise","textPreview":"The useful surprise","textChars":19,"textLines":1,"bbox":[78,484,220,26]}
+{"kind":"textbox","id":"sh/jedkn654","slide":7,"name":"surprise-text","text":"E2 changed from the intended REVIEW REQUIRED to APPROVED after CNP filtering. SHAP traced the shift to a strong negative shopping_net contribution - a limitation made visible by the explainer.","textPreview":"E2 changed from the intended REVIEW REQUIRED to APPROVED after CNP filtering. SHAP traced the shift to a strong negative shopping_net con...","textChars":192,"textLines":1,"bbox":[78,520,490,44]}
+{"kind":"shape","id":"sh/4fm1wb6p","slide":7,"name":"batch-prediction-interface-backing","bbox":[690,200,512,272]}
+{"kind":"textbox","id":"sh/q143ylov","slide":7,"name":"stack-react","text":"React dashboard","textPreview":"React dashboard","textChars":15,"textLines":1,"bbox":[710,504,180,26]}
+{"kind":"textbox","id":"sh/r2dkrq5g","slide":7,"name":"stack-api","text":"-> FastAPI REST API","textPreview":"-> FastAPI REST API","textChars":19,"textLines":1,"bbox":[900,504,220,26]}
+{"kind":"textbox","id":"sh/s3ml0v61","slide":7,"name":"stack-backend","text":"-> models + SHAP + SQLite history","textPreview":"-> models + SHAP + SQLite history","textChars":33,"textLines":1,"bbox":[710,542,430,26]}
+{"kind":"textbox","id":"sh/d4f2t0nm","slide":7,"name":"currency-note","text":"MUR input is supported through a fixed 49 MUR/USD conversion in the retraining path.","textPreview":"MUR input is supported through a fixed 49 MUR/USD conversion in the retraining path.","textChars":84,"textLines":1,"bbox":[710,585,460,36]}
+{"kind":"textbox","id":"sh/e5o32lor","slide":7,"name":"benchmark-footer","text":"Two of three benchmarks matched the intended outcome; this is illustrative, not statistical generalisation.","textPreview":"Two of three benchmarks matched the intended outcome; this is illustrative, not statistical generalisation.","textChars":107,"textLines":1,"bbox":[56,652,1060,22]}
+{"kind":"shape","id":"sh/ozq5szq9","slide":7,"name":"polish-title-rail-7","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/nyh4jupo","slide":7,"name":"polish-title-underline-7","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/2x8nqp83","slide":7,"name":"polish-progress-7-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/x4j6p47q","slide":7,"name":"polish-progress-7-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/c3a5wzq5","slide":7,"name":"polish-progress-7-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/b2h4nupk","slide":7,"name":"polish-progress-7-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/a18nup8z","slide":7,"name":"polish-progress-7-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/lsj6t47m","slide":7,"name":"polish-progress-7-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/kra50jqh","slide":7,"name":"polish-progress-7-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/wneps3ap","slide":7,"name":"polish-progress-7-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/honq18ru","slide":7,"name":"polish-progress-7-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/ulc7qdsj","slide":7,"name":"polish-progress-7-10","bbox":[731,690,16,3]}
+{"kind":"textbox","id":"sh/8jupo3ad","slide":7,"name":"visual-workflow-predict","text":"PREDICT","textPreview":"PREDICT","textChars":7,"textLines":1,"bbox":[710,480,100,22]}
+{"kind":"textbox","id":"sh/9k3qx8ry","slide":7,"name":"visual-workflow-arrow-1","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[816,480,26,22]}
+{"kind":"textbox","id":"sh/mxc7mts7","slide":7,"name":"visual-workflow-explain","text":"EXPLAIN","textPreview":"EXPLAIN","textChars":7,"textLines":1,"bbox":[850,480,100,22]}
+{"kind":"textbox","id":"sh/7yl8vy9s","slide":7,"name":"visual-workflow-arrow-2","text":"→","textPreview":"→","textChars":1,"textLines":1,"bbox":[956,480,26,22]}
+{"kind":"textbox","id":"sh/sfy907ah","slide":7,"name":"visual-workflow-review","text":"REVIEW","textPreview":"REVIEW","textChars":6,"textLines":1,"bbox":[990,480,100,22]}
+{"kind":"image","id":"im/q58jm1wn","slide":7,"name":"Picture 52","geometry":"roundRect","bbox":[696,222.36,500,227.27]}
+{"kind":"notes","id":"nt/gnmp4jqx","slide":7,"text":"The model is packaged as a usable workflow rather than left as an offline experiment. Analysts can submit single or batch predictions, see the ensemble verdict and SHAP explanation, inspect history and confirmed labels can be added as a future retraining loop. The three MUR benchmarks are deliberately illustrative. E1 and E3 behave as intended; E2 exposes a shift after CNP filtering, and the SHAP layer helps diagnose it.\n[Bullet points]\n- Analysts can run single, batch and historical predictions\n- FastAPI connects the React UI to models and SQLite history\n- E1 and E3 matched intent; E2 changed after CNP filtering\n[Sources]\n- User-provided dissertation PDF, Figures 4, 7 and 8, pp. 42, 52-53; embedded batch crop shown on slide; User-provided dissertation PDF, Tables 12-14, pp. 62-63 and limitations p. 67; Project repository, backend/main.py, frontend/src/App.jsx and frontend/src/services/api.js"}
+{"kind":"slide","id":"sl/fu1gfa1s","slide":8,"title":"CONCLUSION","textShapes":9}
+{"kind":"shape","id":"sh/m5gvmhwn","slide":8,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/18byd4zy","slide":8,"name":"section-label","text":"CONCLUSION","textPreview":"CONCLUSION","textChars":10,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/g72x4zyd","slide":8,"name":"page-number","text":"08","textPreview":"08","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/ri9g7uhw","slide":8,"name":"closing-title","text":"The contribution is practical -\nthe local generalisation claim remains preliminary","textPreview":"The contribution is practical - | the local generalisation claim remains preliminary","textChars":82,"textLines":2,"bbox":[56,156,990,160]}
+{"kind":"textbox","id":"sh/6h0fypgb","slide":8,"name":"closing-subtitle","text":"A transparent detection workflow is demonstrated; real Mauritian data is the next evidence step.","textPreview":"A transparent detection workflow is demonstrated; real Mauritian data is the next evidence step.","textChars":96,"textLines":1,"bbox":[56,350,760,44]}
+{"kind":"shape","id":"sh/tkby9kzm","slide":8,"name":"rule","bbox":[56,438,1168,1]}
+{"kind":"textbox","id":"sh/sjix0zy1","slide":8,"name":"adds-title","text":"What this study adds","textPreview":"What this study adds","textChars":20,"textLines":1,"bbox":[56,466,300,30]}
+{"kind":"textbox","id":"sh/je9g3ahk","slide":8,"name":"contributions","text":"01  Named behavioural features\n02  SHAP plus natural-language explanations\n03  Cost-sensitive training and escalation-based decisions","textPreview":"01  Named behavioural features | 02  SHAP plus natural-language explanations | 03  Cost-sensitive training and escalation-based decisions","textChars":133,"textLines":3,"bbox":[56,512,520,112]}
+{"kind":"textbox","id":"sh/id0fu50z","slide":8,"name":"next-title","text":"Next research","textPreview":"Next research","textChars":13,"textLines":1,"bbox":[760,466,250,30]}
+{"kind":"textbox","id":"sh/o7ydoret","slide":8,"name":"next-steps","text":"Real Mauritian transaction data\nVelocity and sequence features\nThreshold calibration on held-out data","textPreview":"Real Mauritian transaction data | Velocity and sequence features | Threshold calibration on held-out data","textChars":101,"textLines":3,"bbox":[760,512,410,112]}
+{"kind":"textbox","id":"sh/98rehwve","slide":8,"name":"questions","text":"Questions","textPreview":"Questions","textChars":9,"textLines":1,"bbox":[56,668,200,24]}
+{"kind":"shape","id":"sh/n6pwfmd8","slide":8,"name":"polish-title-rail-8","bbox":[34,158,6,158]}
+{"kind":"shape","id":"sh/0jydkreh","slide":8,"name":"polish-title-underline-8","bbox":[56,146,92,3]}
+{"kind":"shape","id":"sh/1k7edwv2","slide":8,"name":"polish-progress-8-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/ehgvihwr","slide":8,"name":"polish-progress-8-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/zipwbmdc","slide":8,"name":"polish-progress-8-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/kfixwbe1","slide":8,"name":"polish-progress-8-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/lgbepgvm","slide":8,"name":"polish-progress-8-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/tw7e9gnq","slide":8,"name":"polish-progress-8-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/svydgb65","slide":8,"name":"polish-progress-8-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/7u5w765k","slide":8,"name":"polish-progress-8-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/6twve1oz","slide":8,"name":"polish-progress-8-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/5sne5wne","slide":8,"name":"polish-progress-8-10","bbox":[731,690,16,3]}
+{"kind":"shape","id":"sh/kredcr6t","slide":8,"name":"visual-conclusion-adds-rail","bbox":[42,466,5,156]}
+{"kind":"shape","id":"sh/jq5w365o","slide":8,"name":"visual-conclusion-next-rail","bbox":[746,466,5,156]}
+{"kind":"notes","id":"nt/fu1gfa1s","slide":8,"text":"Close with the balanced claim. The project contributes an interpretable feature pipeline, model comparison, SHAP explanations, an escalation rule and a working analyst-facing application. It does not yet establish statistical generalisation to Mauritius because the local test set contains only three manually constructed transactions. The clearest next steps are real local data, transaction velocity features and threshold calibration on a held-out partition. Then invite questions.\n[Bullet points]\n- Contributions: interpretable features, SHAP, escalation and a deployed app\n- Main limitation: US-simulated data and three hand-made MUR benchmarks\n- Next: local data, velocity features and held-out threshold calibration\n[Sources]\n- User-provided dissertation PDF, conclusion pp. 69-75; User-provided dissertation PDF, limitations and recommendations pp. 73-75"}
+{"kind":"slide","id":"sl/udsvah03","slide":9,"title":"INFERENCE FLOW","textShapes":21}
+{"kind":"shape","id":"sh/qtkf21ob","slide":9,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/1cfmhgne","slide":9,"name":"section-label","text":"INFERENCE FLOW","textPreview":"INFERENCE FLOW","textChars":14,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/0b65obm9","slide":9,"name":"page-number","text":"09","textPreview":"09","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/nex4jq5k","slide":9,"name":"slide-title","text":"How one transaction moves through the system","textPreview":"How one transaction moves through the system","textChars":44,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/mdonql4z","slide":9,"name":"slide-subtitle","text":"The same decision path links behavioural features, ensemble scores and human review.","textPreview":"The same decision path links behavioural features, ensemble scores and human review.","textChars":84,"textLines":1,"bbox":[56,136,1160,32]}
+{"kind":"shape","id":"sh/9gzml0nq","slide":9,"name":"flow-connector-1","bbox":[256,341,36,0]}
+{"kind":"shape","id":"sh/ofq5svm5","slide":9,"name":"flow-connector-2","bbox":[492,341,36,0]}
+{"kind":"shape","id":"sh/bih4na5w","slide":9,"name":"flow-connector-3","bbox":[728,341,36,0]}
+{"kind":"shape","id":"sh/ah8nu54b","slide":9,"name":"flow-connector-4","bbox":[964,341,36,0]}
+{"kind":"shape","id":"sh/oza1gfyh","slide":9,"name":"flow-card-1","bbox":[56,250,200,182]}
+{"kind":"shape","id":"sh/p0ji9kf2","slide":9,"name":"flow-step-1","bbox":[76,270,32,32]}
+{"kind":"textbox","id":"sh/2xsjepgb","slide":9,"name":"flow-number-1","text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[76,275,32,20]}
+{"kind":"textbox","id":"sh/3y107axw","slide":9,"name":"flow-label-1","text":"CAPTURE","textPreview":"CAPTURE","textChars":7,"textLines":1,"bbox":[122,276,120,22]}
+{"kind":"textbox","id":"sh/cnu1kzyd","slide":9,"name":"flow-body-1","text":"Raw transaction\ncontext","textPreview":"Raw transaction | context","textChars":23,"textLines":2,"bbox":[76,332,160,70]}
+{"kind":"shape","id":"sh/do3id4fy","slide":9,"name":"flow-card-2","bbox":[292,250,200,182]}
+{"kind":"shape","id":"sh/qlcjipgn","slide":9,"name":"flow-step-2","bbox":[312,270,32,32]}
+{"kind":"textbox","id":"sh/bml0buxs","slide":9,"name":"flow-number-2","text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[312,275,32,20]}
+{"kind":"textbox","id":"sh/0ru1ozyp","slide":9,"name":"flow-label-2","text":"ENGINEER","textPreview":"ENGINEER","textChars":8,"textLines":1,"bbox":[358,276,120,22]}
+{"kind":"textbox","id":"sh/lsn2h4fa","slide":9,"name":"flow-body-2","text":"Hour · age ·\ndistance · z-score","textPreview":"Hour · age · | distance · z-score","textChars":31,"textLines":2,"bbox":[312,332,160,70]}
+{"kind":"shape","id":"sh/98ji147e","slide":9,"name":"flow-card-3","bbox":[528,250,200,182]}
+{"kind":"shape","id":"sh/87a18zqt","slide":9,"name":"flow-step-3","bbox":[548,270,32,32]}
+{"kind":"textbox","id":"sh/76h0zup8","slide":9,"name":"flow-number-3","text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[548,275,32,20]}
+{"kind":"textbox","id":"sh/ml8j6p8n","slide":9,"name":"flow-label-3","text":"SCORE","textPreview":"SCORE","textChars":5,"textLines":1,"bbox":[594,276,120,22]}
+{"kind":"textbox","id":"sh/hcji5o7a","slide":9,"name":"flow-body-3","text":"LR · RF · XGB\nfraud probabilities","textPreview":"LR · RF · XGB | fraud probabilities","textChars":33,"textLines":2,"bbox":[548,332,160,70]}
+{"kind":"shape","id":"sh/wba1cjqp","slide":9,"name":"flow-card-4","bbox":[764,250,200,182]}
+{"kind":"shape","id":"sh/va103ep4","slide":9,"name":"flow-step-4","bbox":[784,270,32,32]}
+{"kind":"textbox","id":"sh/u9sja98z","slide":9,"name":"flow-number-4","text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[784,275,32,20]}
+{"kind":"textbox","id":"sh/xgzitk76","slide":9,"name":"flow-label-4","text":"EXPLAIN","textPreview":"EXPLAIN","textChars":7,"textLines":1,"bbox":[830,276,120,22]}
+{"kind":"textbox","id":"sh/cf6h0fql","slide":9,"name":"flow-body-4","text":"SHAP factors\nanalyst message","textPreview":"SHAP factors | analyst message","textChars":28,"textLines":2,"bbox":[784,332,160,70]}
+{"kind":"shape","id":"sh/2l4faloj","slide":9,"name":"flow-card-5","bbox":[1000,250,200,182]}
+{"kind":"shape","id":"sh/nmdg3q54","slide":9,"name":"flow-step-5","bbox":[1020,270,32,32]}
+{"kind":"textbox","id":"sh/onmxcv69","slide":9,"name":"flow-number-5","text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[1020,275,32,20]}
+{"kind":"textbox","id":"sh/pofy50nu","slide":9,"name":"flow-label-5","text":"DECIDE","textPreview":"DECIDE","textChars":6,"textLines":1,"bbox":[1066,276,120,22]}
+{"kind":"textbox","id":"sh/apofe5of","slide":9,"name":"flow-body-5","text":"Approved · Review\nFraud blocked","textPreview":"Approved · Review | Fraud blocked","textChars":31,"textLines":2,"bbox":[1020,332,160,70]}
+{"kind":"shape","id":"sh/bqxg7q50","slide":9,"name":"traceability-callout","bbox":[56,510,1168,80]}
+{"kind":"textbox","id":"sh/cr6xgv6l","slide":9,"name":"callout-label","text":"DESIGN PRINCIPLE","textPreview":"DESIGN PRINCIPLE","textChars":16,"textLines":1,"bbox":[78,530,170,22]}
+{"kind":"textbox","id":"sh/xcfy90n6","slide":9,"name":"callout-text","text":"Traceability is the product feature: every verdict can be reviewed and explained.","textPreview":"Traceability is the product feature: every verdict can be reviewed and explained.","textChars":81,"textLines":1,"bbox":[272,525,910,36]}
+{"kind":"shape","id":"sh/rutwv65w","slide":9,"name":"polish-title-rail-9","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/7y14jyd8","slide":9,"name":"polish-title-underline-9","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/mdsnatcn","slide":9,"name":"polish-progress-9-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/903ml8be","slide":9,"name":"polish-progress-9-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/8zu5c3ut","slide":9,"name":"polish-progress-9-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/v2l4nitk","slide":9,"name":"polish-progress-9-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/u1cnedcz","slide":9,"name":"polish-progress-9-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/h43mp8ba","slide":9,"name":"polish-progress-9-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/w3u5g3u5","slide":9,"name":"polish-progress-9-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/j6l4ritg","slide":9,"name":"polish-progress-9-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/i5cnidcv","slide":9,"name":"polish-progress-9-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/0bel8na9","slide":9,"name":"polish-progress-9-10","bbox":[731,690,16,3]}
+{"kind":"notes","id":"nt/udsvah03","slide":9,"text":"Use this slide to connect the research method to the prototype. A transaction is not just scored: it is transformed into named behavioural features, scored by three models, explained, and then routed into a human-readable verdict.\n[Bullet points]\n- Capture raw transaction attributes and context\n- Engineer four derived behavioural features\n- Score with LR, RF and XGB\n[Sources]\n- User-provided dissertation PDF, methodology pp. 30-32 and model workflow pp. 46-48; User-provided dissertation PDF, SHAP and prototype discussion pp. 51-53; Project repository, backend/utils/feature_engineering.py and backend/models/predict.py"}
+{"kind":"slide","id":"sl/m90b6t0r","slide":10,"title":"ANSWERS","textShapes":20}
+{"kind":"shape","id":"sh/0nut8rul","slide":10,"name":"rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/xc3mho32","slide":10,"name":"section-label","text":"ANSWERS","textPreview":"ANSWERS","textChars":7,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"textbox","id":"sh/cbu58j2h","slide":10,"name":"page-number","text":"10","textPreview":"10","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"textbox","id":"sh/zelojyl8","slide":10,"name":"slide-title","text":"Three research questions, three answers","textPreview":"Three research questions, three answers","textChars":39,"textLines":1,"bbox":[56,78,1168,60]}
+{"kind":"textbox","id":"sh/ydcnatkn","slide":10,"name":"slide-subtitle","text":"Evidence supports the prototype; local generalisation remains preliminary.","textPreview":"Evidence supports the prototype; local generalisation remains preliminary.","textChars":74,"textLines":1,"bbox":[56,136,1160,32]}
+{"kind":"textbox","id":"sh/l036l83y","slide":10,"name":"rq-header","text":"RESEARCH QUESTION","textPreview":"RESEARCH QUESTION","textChars":17,"textLines":1,"bbox":[180,184,380,22]}
+{"kind":"textbox","id":"sh/kzu5c32t","slide":10,"name":"answer-header","text":"EVIDENCE / ANSWER","textPreview":"EVIDENCE / ANSWER","textChars":17,"textLines":1,"bbox":[610,184,420,22]}
+{"kind":"shape","id":"sh/725onyl4","slide":10,"name":"rq-row-1","bbox":[56,218,1168,94]}
+{"kind":"textbox","id":"sh/m1cnetkj","slide":10,"name":"rq-label-1","text":"RQ1","textPreview":"RQ1","textChars":3,"textLines":1,"bbox":[78,251,78,24]}
+{"kind":"textbox","id":"sh/s7yt4b21","slide":10,"name":"rq-question-1","text":"Can supervised models detect CNP fraud under severe imbalance?","textPreview":"Can supervised models detect CNP fraud under severe imbalance?","textChars":62,"textLines":1,"bbox":[180,232,390,66]}
+{"kind":"shape","id":"sh/d87uxg3m","slide":10,"name":"rq-verdict-1","bbox":[610,252,74,28]}
+{"kind":"textbox","id":"sh/q5gb21kb","slide":10,"name":"rq-verdict-text-1","text":"YES","textPreview":"YES","textChars":3,"textLines":1,"bbox":[610,258,74,18]}
+{"kind":"textbox","id":"sh/r6pcv6lw","slide":10,"name":"rq-answer-1","text":"XGBoost achieved 92.63% precision and 97.60% PR-AUC; Random Forest was close.","textPreview":"XGBoost achieved 92.63% precision and 97.60% PR-AUC; Random Forest was close.","textChars":77,"textLines":1,"bbox":[704,233,500,64]}
+{"kind":"shape","id":"sh/0bit8b2d","slide":10,"name":"rq-row-2","bbox":[56,326,1168,94]}
+{"kind":"textbox","id":"sh/1cru1g3y","slide":10,"name":"rq-label-2","text":"RQ2","textPreview":"RQ2","textChars":3,"textLines":1,"bbox":[78,359,78,24]}
+{"kind":"textbox","id":"sh/e9gb61k7","slide":10,"name":"rq-question-2","text":"Can explanations and escalation make decisions more reviewable?","textPreview":"Can explanations and escalation make decisions more reviewable?","textChars":63,"textLines":1,"bbox":[180,340,390,66]}
+{"kind":"shape","id":"sh/fapcz6ls","slide":10,"name":"rq-verdict-2","bbox":[610,360,74,28]}
+{"kind":"textbox","id":"sh/ozitcv29","slide":10,"name":"rq-verdict-text-2","text":"YES","textPreview":"YES","textChars":3,"textLines":1,"bbox":[610,366,74,18]}
+{"kind":"textbox","id":"sh/p0ru503u","slide":10,"name":"rq-answer-2","text":"SHAP exposes the drivers, while the most severe model verdict is escalated for review.","textPreview":"SHAP exposes the drivers, while the most severe model verdict is escalated for review.","textChars":86,"textLines":1,"bbox":[704,341,500,64]}
+{"kind":"shape","id":"sh/xwnupgvy","slide":10,"name":"rq-row-3","bbox":[56,434,1168,94]}
+{"kind":"textbox","id":"sh/wvetgbud","slide":10,"name":"rq-label-3","text":"RQ3","textPreview":"RQ3","textChars":3,"textLines":1,"bbox":[78,467,78,24]}
+{"kind":"textbox","id":"sh/bu5cnqd8","slide":10,"name":"rq-question-3","text":"Does the prototype generalise to Mauritius?","textPreview":"Does the prototype generalise to Mauritius?","textChars":43,"textLines":1,"bbox":[180,448,390,66]}
+{"kind":"shape","id":"sh/atwbelcn","slide":10,"name":"rq-verdict-3","bbox":[610,468,112,28]}
+{"kind":"textbox","id":"sh/lk7ut0va","slide":10,"name":"rq-verdict-text-3","text":"PRELIMINARY","textPreview":"PRELIMINARY","textChars":11,"textLines":1,"bbox":[610,474,112,18]}
+{"kind":"textbox","id":"sh/kjytkvup","slide":10,"name":"rq-answer-3","text":"Two of three MUR benchmarks matched intent; real local data is still needed.","textPreview":"Two of three MUR benchmarks matched intent; real local data is still needed.","textChars":76,"textLines":1,"bbox":[742,449,440,64]}
+{"kind":"shape","id":"sh/jypcrqd4","slide":10,"name":"overall-callout","bbox":[56,560,1168,72]}
+{"kind":"textbox","id":"sh/yxgbilcj","slide":10,"name":"overall-label","text":"OVERALL TAKEAWAY","textPreview":"OVERALL TAKEAWAY","textChars":16,"textLines":1,"bbox":[78,584,188,22]}
+{"kind":"textbox","id":"sh/1o3ahwvq","slide":10,"name":"overall-text","text":"Accurate and explainable prototype; local generalisation remains an open question.","textPreview":"Accurate and explainable prototype; local generalisation remains an open question.","textChars":82,"textLines":1,"bbox":[288,577,900,34]}
+{"kind":"shape","id":"sh/q9srixs3","slide":10,"name":"polish-title-rail-10","bbox":[34,80,6,58]}
+{"kind":"shape","id":"sh/ru18r2to","slide":10,"name":"polish-title-underline-10","bbox":[56,68,92,3]}
+{"kind":"shape","id":"sh/cva9k7a9","slide":10,"name":"polish-progress-10-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/dwjqtcbu","slide":10,"name":"polish-progress-10-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/exsrmhsf","slide":10,"name":"polish-progress-10-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/zyl8vmt0","slide":10,"name":"polish-progress-10-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/0zu9ora5","slide":10,"name":"polish-progress-10-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/103qxcbq","slide":10,"name":"polish-progress-10-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/u187adsv","slide":10,"name":"polish-progress-10-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/f2h8jitg","slide":10,"name":"polish-progress-10-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/bmpgrah8","slide":10,"name":"polish-progress-10-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/algfy50n","slide":10,"name":"polish-progress-10-10","bbox":[731,690,16,3]}
+{"kind":"notes","id":"nt/m90b6t0r","slide":10,"text":"This is the concise conclusion. The model question is answered positively, the interpretability question is answered through SHAP and escalation, and the Mauritius question remains preliminary. Finish by stating exactly what the project demonstrates and what future data is required.\n[Bullet points]\n- RQ1: supervised learning detects fraud despite severe imbalance\n- RQ2: SHAP and escalation make decisions more reviewable\n- RQ3: Mauritius generalisation is promising but preliminary\n[Sources]\n- User-provided dissertation PDF, Table 10 p. 58 and discussion of RQ1 pp. 64-65; User-provided dissertation PDF, Tables 13-14 pp. 62-63 and discussion of RQ2-RQ3 pp. 65-67; User-provided dissertation PDF, conclusion and recommendations pp. 69-75"}
+{"kind":"slide","id":"sl/h4brxy","slide":11,"title":"CLOSING","textShapes":8}
+{"kind":"shape","id":"sh/rulcj6h4","slide":11,"name":"thanks-top-rule","bbox":[56,28,1168,2]}
+{"kind":"textbox","id":"sh/cvutsbip","slide":11,"name":"thanks-section-label","text":"CLOSING","textPreview":"CLOSING","textChars":7,"textLines":1,"bbox":[56,42,440,22]}
+{"kind":"shape","id":"sh/dw3ulgza","slide":11,"name":"thanks-title-rail","bbox":[34,210,6,154]}
+{"kind":"shape","id":"sh/i5cbm10n","slide":11,"name":"thanks-title-underline","bbox":[56,198,116,3]}
+{"kind":"textbox","id":"sh/3qlcv6h8","slide":11,"name":"thanks-title","text":"Thank you","textPreview":"Thank you","textChars":9,"textLines":1,"bbox":[56,224,660,72]}
+{"kind":"textbox","id":"sh/4rutobit","slide":11,"name":"thanks-subtitle","text":"Questions and discussion","textPreview":"Questions and discussion","textChars":24,"textLines":1,"bbox":[56,318,660,40]}
+{"kind":"textbox","id":"sh/ps3uxgze","slide":11,"name":"thanks-project-label","text":"Interpretable ML for CNP fraud detection","textPreview":"Interpretable ML for CNP fraud detection","textChars":40,"textLines":1,"bbox":[56,386,600,30]}
+{"kind":"shape","id":"sh/mlwvylgr","slide":11,"name":"thanks-discussion-panel","bbox":[792,176,360,330]}
+{"kind":"textbox","id":"sh/nm5crqhc","slide":11,"name":"thanks-discussion-label","text":"OPEN DISCUSSION","textPreview":"OPEN DISCUSSION","textChars":15,"textLines":1,"bbox":[842,202,260,24]}
+{"kind":"shape","id":"sh/fetgbihc","slide":11,"name":"thanks-question-circle","bbox":[906,250,132,132]}
+{"kind":"textbox","id":"sh/edkz2dgr","slide":11,"name":"thanks-question-mark","text":"?","textPreview":"?","textChars":1,"textLines":1,"bbox":[906,264,132,100]}
+{"kind":"textbox","id":"sh/1gbydsz2","slide":11,"name":"thanks-theme-line","text":"DETECT  •  EXPLAIN  •  REVIEW","textPreview":"DETECT  •  EXPLAIN  •  REVIEW","textChars":29,"textLines":1,"bbox":[832,426,280,24]}
+{"kind":"shape","id":"sh/0f2h4nyx","slide":11,"name":"thanks-progress-1","bbox":[533,690,16,3]}
+{"kind":"shape","id":"sh/n2tgf2h8","slide":11,"name":"thanks-progress-2","bbox":[555,690,16,3]}
+{"kind":"shape","id":"sh/2hkz6xgn","slide":11,"name":"thanks-progress-3","bbox":[577,690,16,3]}
+{"kind":"shape","id":"sh/p4vyhsze","slide":11,"name":"thanks-progress-4","bbox":[599,690,16,3]}
+{"kind":"shape","id":"sh/o32h8nyt","slide":11,"name":"thanks-progress-5","bbox":[621,690,16,3]}
+{"kind":"shape","id":"sh/b6dgj2hk","slide":11,"name":"thanks-progress-6","bbox":[643,690,16,3]}
+{"kind":"shape","id":"sh/a54zaxgz","slide":11,"name":"thanks-progress-7","bbox":[665,690,16,3]}
+{"kind":"shape","id":"sh/m1oj2107","slide":11,"name":"thanks-progress-8","bbox":[687,690,16,3]}
+{"kind":"shape","id":"sh/72xkb61s","slide":11,"name":"thanks-progress-9","bbox":[709,690,16,3]}
+{"kind":"shape","id":"sh/83q14bix","slide":11,"name":"thanks-progress-10","bbox":[731,690,16,3]}
+{"kind":"textbox","id":"sh/t4z2dgji","slide":11,"name":"thanks-page-number","text":"11","textPreview":"11","textChars":2,"textLines":1,"bbox":[1180,676,54,22]}
+{"kind":"notes","id":"nt/h4brxy","slide":11,"text":"Close by thanking the audience and inviting questions. If a final summary is needed, restate the balanced conclusion: the prototype is accurate and explainable, while local generalisation remains preliminary.\n[Bullet points]\n- Thank the audience\n- Invite questions\n- Restate the balanced conclusion if needed\n[Sources]\n- User-provided dissertation PDF, conclusion and recommendations, pp. 69-75."}
