@@ -34,7 +34,12 @@ from database.db import get_db, init_db
 from database.models import Prediction
 from datautils.upload import validate_predict_csv
 from models.train import load_all_models, models_exist, train
-from models.predict import predict_batch, predict_single
+from models.predict import (
+    DEFAULT_FRAUD_THRESHOLD,
+    predict_batch,
+    predict_single,
+    probability_to_verdict,
+)
 
 app = FastAPI(title="CNP Fraud Detection API", version="1.0.0")
 
@@ -122,6 +127,68 @@ def require_models():
     return _models, _pipeline
 
 
+_BATCH_INSERT_CHUNK = 1000
+
+
+def _jsonable(value):
+    """Convert a pandas/numpy cell into something json.dumps can handle."""
+    if value is None:
+        return None
+    if isinstance(value, (pd.Timestamp, datetime)):
+        return value.isoformat()
+    try:
+        if pd.isna(value):
+            return None
+    except (ValueError, TypeError):
+        pass
+    if hasattr(value, "item") and not isinstance(value, (bytes, bytearray, str)):
+        try:
+            return _jsonable(value.item())
+        except (ValueError, AttributeError):
+            return str(value)
+    if isinstance(value, (str, int, float, bool)):
+        return value
+    return str(value)
+
+
+def _persist_batch_to_history(
+    db: Session,
+    source_df: pd.DataFrame,
+    result_df: pd.DataFrame,
+    selected: list,
+    thresholds: dict,
+) -> None:
+    """Write each (row, model) prediction so batch runs appear on /api/history."""
+    active = [name for name in selected if f"fraud_probability_{name}" in result_df.columns]
+    if not active or source_df.empty:
+        return
+
+    now = datetime.utcnow()
+    source_records = source_df.to_dict(orient="records")
+    probs = {
+        name: result_df[f"fraud_probability_{name}"].to_numpy(dtype=float, copy=False)
+        for name in active
+    }
+
+    mappings = []
+    for i, raw in enumerate(source_records):
+        tx_json = json.dumps({str(k): _jsonable(v) for k, v in raw.items()})
+        for name in active:
+            prob = float(probs[name][i])
+            threshold = thresholds.get(name, DEFAULT_FRAUD_THRESHOLD)
+            mappings.append({
+                "transaction_data": tx_json,
+                "model_used": name,
+                "fraud_probability": round(prob, 4),
+                "verdict": probability_to_verdict(prob, threshold),
+                "created_at": now,
+            })
+
+    for start in range(0, len(mappings), _BATCH_INSERT_CHUNK):
+        db.bulk_insert_mappings(Prediction, mappings[start:start + _BATCH_INSERT_CHUNK])
+    db.commit()
+
+
 # ── Request body for a single prediction ─────────────────────────────────────
 
 class TransactionInput(BaseModel):
@@ -194,6 +261,7 @@ def predict(
 async def predict_batch_endpoint(
     file: UploadFile = File(...),
     models: str = Query(default="lr,rf,xgb"),
+    db: Session = Depends(get_db),
 ):
     """Predict fraud probability for every row in an uploaded CSV, returning a CSV back."""
     ml_models, pipeline = require_models()
@@ -207,6 +275,7 @@ async def predict_batch_endpoint(
 
     thresholds = _extract_thresholds(_metrics)
     result_df = predict_batch(df, ml_models, pipeline, selected, thresholds=thresholds)
+    _persist_batch_to_history(db, df, result_df, selected, thresholds)
 
     output = io.StringIO()
     result_df.to_csv(output, index=False)
