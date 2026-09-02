@@ -61,6 +61,8 @@ backend/data/fraudTrain.csv
 backend/data/fraudTest.csv
 ```
 
+These files are **not committed to Git** — they exceed GitHub's 100 MB per-file limit (~334 MB and ~143 MB respectively) and are listed in `.gitignore`. You must download and place them locally (or on your deployment host) before training will run.
+
 On first startup the backend checks for saved models. If none exist and the CSV files are present, training begins automatically (takes ~10–20 minutes depending on hardware).
 
 To reset and retrain from scratch, delete the contents of `backend/saved_models/` (keep the folder) and restart the server.
